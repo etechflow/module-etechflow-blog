@@ -45,6 +45,11 @@ class Router implements RouterInterface
             return null;
         }
 
+        // Prevent re-interception after forward('noroute') — avoids infinite loop
+        if ($request->getActionName() === 'noroute') {
+            return null;
+        }
+
         $route = (string)$this->scopeConfig->getValue('etechflow_blog/general/route', ScopeInterface::SCOPE_STORE);
         $route = $route !== '' ? trim($route, '/') : 'blog';
 

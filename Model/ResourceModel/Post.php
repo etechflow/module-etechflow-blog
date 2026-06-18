@@ -54,7 +54,7 @@ class Post extends AbstractDb
     protected function _afterSave(AbstractModel $object)
     {
         $postId = (int)$object->getId();
-        $stores = $this->normalize($object->getData('store_id')) ?? [0];
+        $stores = $this->normalize($object->getData('store_id')) ?: [0];
         $this->syncLink('etechflow_blog_post_store', 'store_id', $postId, $stores, false);
         $this->syncLink('etechflow_blog_post_category', 'category_id', $postId, $this->normalize($object->getData('categories')));
         $this->syncLink('etechflow_blog_post_tag', 'tag_id', $postId, $this->normalize($object->getData('tags')));
