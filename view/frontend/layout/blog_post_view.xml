@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- Single post layout -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="etechflow_blog_assets"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Etechflow\Blog\Block\Post" name="etechflow.blog.post"
+                   template="Etechflow_Blog::post/view.phtml" cacheable="true">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Etechflow\Blog\ViewModel\Config</argument>
+                </arguments>
+                <block class="Etechflow\Blog\Block\Sidebar" name="etechflow.blog.post.sidebar" as="sidebar"
+                       template="Etechflow_Blog::sidebar.phtml">
+                    <arguments>
+                        <argument name="view_model" xsi:type="object">Etechflow\Blog\ViewModel\Config</argument>
+                    </arguments>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

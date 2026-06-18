@@ -1,0 +1,347 @@
+<?xml version="1.0"?>
+<!-- Post create/edit form. Every field carries a <notice> "how to use" hint. -->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">etechflow_blog_post_form.etechflow_blog_post_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Post Information</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="back" class="Etechflow\Blog\Block\Adminhtml\Post\Edit\BackButton"/>
+            <button name="delete" class="Etechflow\Blog\Block\Adminhtml\Post\Edit\DeleteButton"/>
+            <button name="save" class="Etechflow\Blog\Block\Adminhtml\Post\Edit\SaveButton"/>
+            <button name="save_and_continue" class="Etechflow\Blog\Block\Adminhtml\Post\Edit\SaveAndContinueButton"/>
+        </buttons>
+        <namespace>etechflow_blog_post_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>etechflow_blog_post_form.etechflow_blog_post_form_data_source</dep>
+        </deps>
+    </settings>
+
+    <dataSource name="etechflow_blog_post_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="etechflow_blog/post/save"/>
+        </settings>
+        <dataProvider class="Etechflow\Blog\Model\Post\DataProvider" name="etechflow_blog_post_form_data_source">
+            <settings>
+                <requestFieldName>post_id</requestFieldName>
+                <primaryFieldName>post_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+
+    <!-- ===================== GENERAL ===================== -->
+    <fieldset name="general" sortOrder="10">
+        <settings>
+            <label translate="true">General</label>
+        </settings>
+
+        <field name="is_active" formElement="checkbox" sortOrder="10">
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Enabled</label>
+                <notice translate="true">Turn off to hide this post from the storefront without deleting it.</notice>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+
+        <field name="title" formElement="input" sortOrder="20">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Title</label>
+                <validation><rule name="required-entry" xsi:type="boolean">true</rule></validation>
+                <notice translate="true">The headline shown to readers. Also used to auto-generate the URL key if you leave it blank.</notice>
+            </settings>
+        </field>
+
+        <field name="identifier" formElement="input" sortOrder="30">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">URL Key</label>
+                <notice translate="true">The slug in the address bar, e.g. "how-to-cut-a-key" → /blog/how-to-cut-a-key. Lowercase, hyphens, no spaces. Leave blank to auto-fill from the title.</notice>
+            </settings>
+        </field>
+
+        <field name="author_id" formElement="select" sortOrder="40">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Author</label>
+                <notice translate="true">Who wrote this post. Drives the author box and author page. Manage authors under Blog › Authors.</notice>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Etechflow\Blog\Model\Source\Author"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+
+        <field name="publish_time" formElement="date" sortOrder="50">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Publish Date</label>
+                <notice translate="true">When the post goes live. Set a future date/time to schedule it — it stays hidden until then.</notice>
+            </settings>
+        </field>
+
+        <field name="content_heading" formElement="input" sortOrder="60">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Page Heading (H1)</label>
+                <notice translate="true">Optional. Overrides the on-page H1. Leave blank to use the Title.</notice>
+            </settings>
+        </field>
+
+        <field name="short_content" formElement="textarea" sortOrder="70">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Excerpt</label>
+                <notice translate="true">Short summary shown in listings and meta description fallback. Leave blank to auto-generate from the content.</notice>
+            </settings>
+        </field>
+
+        <field name="content" sortOrder="80">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">string</item>
+                    <item name="wysiwyg" xsi:type="boolean">true</item>
+                    <item name="wysiwygConfigData" xsi:type="array">
+                        <item name="height" xsi:type="string">500px</item>
+                        <item name="add_variables" xsi:type="boolean">false</item>
+                        <item name="add_widgets" xsi:type="boolean">true</item>
+                        <item name="add_images" xsi:type="boolean">true</item>
+                    </item>
+                    <item name="label" xsi:type="string" translate="true">Content</item>
+                    <item name="formElement" xsi:type="string">wysiwyg</item>
+                    <item name="source" xsi:type="string">post</item>
+                    <item name="notice" xsi:type="string" translate="true">The article body. Use the editor for formatting, images and media; headings (H2/H3) here power the auto table-of-contents.</item>
+                </item>
+            </argument>
+        </field>
+    </fieldset>
+
+    <!-- ===================== MEDIA ===================== -->
+    <fieldset name="media" sortOrder="20">
+        <settings>
+            <label translate="true">Images</label>
+            <collapsible>true</collapsible>
+            <opened>false</opened>
+        </settings>
+        <field name="featured_img" formElement="input" sortOrder="10">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Featured Image</label>
+                <notice translate="true">Path under pub/media, e.g. magefan_blog/my-image.jpg. Shown at the top of the post and as the share image. (An upload widget is on the roadmap.)</notice>
+            </settings>
+        </field>
+        <field name="featured_list_img" formElement="input" sortOrder="20">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Listing Thumbnail</label>
+                <notice translate="true">Optional smaller image for grids/sidebar. Defaults to the Featured Image if left blank.</notice>
+            </settings>
+        </field>
+        <field name="banner_img_desktop" formElement="input" sortOrder="30">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Banner — Desktop</label>
+                <notice translate="true">Wide hero banner for large screens. Path under pub/media.</notice>
+            </settings>
+        </field>
+        <field name="banner_img_tablet" formElement="input" sortOrder="40">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Banner — Tablet</label>
+                <notice translate="true">Hero banner for medium screens. Falls back to the desktop banner if blank.</notice>
+            </settings>
+        </field>
+        <field name="banner_img_mobile" formElement="input" sortOrder="50">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Banner — Mobile</label>
+                <notice translate="true">Hero banner for phones. Falls back to the tablet/desktop banner if blank.</notice>
+            </settings>
+        </field>
+    </fieldset>
+
+    <!-- ===================== ORGANIZATION ===================== -->
+    <fieldset name="organization" sortOrder="30">
+        <settings>
+            <label translate="true">Categories &amp; Tags</label>
+            <collapsible>true</collapsible>
+            <opened>false</opened>
+        </settings>
+        <field name="categories" formElement="multiselect" sortOrder="10">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Categories</label>
+                <notice translate="true">Which blog categories this post belongs to. Manage them under Blog › Categories.</notice>
+            </settings>
+            <formElements>
+                <multiselect>
+                    <settings>
+                        <options class="Etechflow\Blog\Model\Source\Category"/>
+                    </settings>
+                </multiselect>
+            </formElements>
+        </field>
+        <field name="tags" formElement="multiselect" sortOrder="20">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Tags</label>
+                <notice translate="true">Free-form topics. Tags create /blog/tag/{tag} pages and the tag cloud.</notice>
+            </settings>
+            <formElements>
+                <multiselect>
+                    <settings>
+                        <options class="Etechflow\Blog\Model\Source\Tag"/>
+                    </settings>
+                </multiselect>
+            </formElements>
+        </field>
+        <field name="include_in_recent" formElement="checkbox" sortOrder="30">
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Include In Recent/Featured</label>
+                <notice translate="true">Untick to keep this post out of "Recent posts" and the featured slot (it still shows in its category/tag).</notice>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="position" formElement="input" sortOrder="40">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Position</label>
+                <notice translate="true">Optional manual sort order (lower shows first) where sorting by position is used.</notice>
+            </settings>
+        </field>
+    </fieldset>
+
+    <!-- ===================== SEO ===================== -->
+    <fieldset name="seo" sortOrder="40">
+        <settings>
+            <label translate="true">Search Engine Optimization</label>
+            <collapsible>true</collapsible>
+            <opened>false</opened>
+        </settings>
+        <field name="meta_title" formElement="input" sortOrder="10">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Meta Title</label>
+                <notice translate="true">The browser-tab / Google title. ~50–60 characters. Defaults to the post title if blank.</notice>
+            </settings>
+        </field>
+        <field name="meta_description" formElement="textarea" sortOrder="20">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Meta Description</label>
+                <notice translate="true">The snippet under the title in Google. ~150–160 characters. Defaults to the excerpt if blank.</notice>
+            </settings>
+        </field>
+        <field name="meta_keywords" formElement="textarea" sortOrder="30">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Meta Keywords</label>
+                <notice translate="true">Comma-separated keywords. Minor SEO value; optional.</notice>
+            </settings>
+        </field>
+        <field name="meta_robots" formElement="input" sortOrder="40">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Robots Meta</label>
+                <notice translate="true">Controls indexing, e.g. INDEX,FOLLOW (default) or NOINDEX,NOFOLLOW to hide from search engines.</notice>
+            </settings>
+        </field>
+        <field name="og_title" formElement="input" sortOrder="50">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Social Title (Open Graph)</label>
+                <notice translate="true">Title used when shared on Facebook/LinkedIn/X. Defaults to the post title.</notice>
+            </settings>
+        </field>
+        <field name="og_description" formElement="textarea" sortOrder="60">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Social Description (Open Graph)</label>
+                <notice translate="true">Description used when shared on social media. Defaults to the meta description.</notice>
+            </settings>
+        </field>
+        <field name="og_img" formElement="input" sortOrder="70">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Social Image (Open Graph)</label>
+                <notice translate="true">Image shown when shared on social media (ideally 1200×630). Path under pub/media. Defaults to the featured image.</notice>
+            </settings>
+        </field>
+    </fieldset>
+
+    <!-- ===================== SETTINGS ===================== -->
+    <fieldset name="settings" sortOrder="50">
+        <settings>
+            <label translate="true">Comments &amp; Store Views</label>
+            <collapsible>true</collapsible>
+            <opened>false</opened>
+        </settings>
+        <field name="is_comments_enabled" formElement="checkbox" sortOrder="10">
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Allow Comments</label>
+                <notice translate="true">Let readers comment on this specific post (also respects the global Comments setting).</notice>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="store_id" formElement="multiselect" sortOrder="20">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Store Views</label>
+                <notice translate="true">Which store views show this post. Choose "All Store Views" for everywhere (multi-store/multi-language setups).</notice>
+            </settings>
+            <formElements>
+                <multiselect>
+                    <settings>
+                        <options class="Magento\Cms\Ui\Component\Listing\Column\Cms\Options"/>
+                    </settings>
+                </multiselect>
+            </formElements>
+        </field>
+    </fieldset>
+</form>

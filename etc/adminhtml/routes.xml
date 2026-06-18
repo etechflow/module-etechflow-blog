@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Admin route for all blog management controllers
+ * (etechflow_blog/post, /category, /tag, /author, /comment).
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="etechflow_blog" frontName="etechflow_blog">
+            <module name="Etechflow_Blog" before="Magento_Backend"/>
+        </route>
+    </router>
+</config>

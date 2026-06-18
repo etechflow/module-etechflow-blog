@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">etechflow_blog_author_listing.etechflow_blog_author_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>etechflow_blog_author_columns</spinner>
+        <deps><dep>etechflow_blog_author_listing.etechflow_blog_author_listing_data_source</dep></deps>
+        <buttons>
+            <button name="add"><url path="*/*/new"/><class>primary</class><label translate="true">Add New Author</label></button>
+        </buttons>
+    </settings>
+    <dataSource name="etechflow_blog_author_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig><param name="indexField" xsi:type="string">author_id</param></storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Etechflow_Blog::author</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider"
+                      name="etechflow_blog_author_listing_data_source">
+            <settings><requestFieldName>author_id</requestFieldName><primaryFieldName>author_id</primaryFieldName></settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filters name="listing_filters"/>
+        <massaction name="listing_massaction">
+            <action name="delete">
+                <settings>
+                    <confirm><message translate="true">Delete the selected authors?</message><title translate="true">Delete authors</title></confirm>
+                    <url path="etechflow_blog/author/massDelete"/><type>delete</type><label translate="true">Delete</label>
+                </settings>
+            </action>
+        </massaction>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="etechflow_blog_author_columns">
+        <selectionsColumn name="ids"><settings><indexField>author_id</indexField></settings></selectionsColumn>
+        <column name="author_id"><settings><filter>textRange</filter><label translate="true">ID</label><sorting>asc</sorting></settings></column>
+        <column name="title"><settings><filter>text</filter><label translate="true">Name</label></settings></column>
+        <column name="identifier"><settings><filter>text</filter><label translate="true">URL Key</label></settings></column>
+        <column name="email"><settings><filter>text</filter><label translate="true">Email</label></settings></column>
+        <column name="is_active" component="Magento_Ui/js/grid/columns/select">
+            <settings><options class="Etechflow\Blog\Model\Source\Status"/><filter>select</filter><dataType>select</dataType><label translate="true">Status</label></settings>
+        </column>
+        <actionsColumn name="actions" class="Etechflow\Blog\Ui\Component\Listing\Column\Actions">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="indexField" xsi:type="string">author_id</item>
+                    <item name="editUrlPath" xsi:type="string">etechflow_blog/author/edit</item>
+                    <item name="deleteUrlPath" xsi:type="string">etechflow_blog/author/delete</item>
+                </item>
+            </argument>
+            <settings><indexField>author_id</indexField></settings>
+        </actionsColumn>
+    </columns>
+</listing>

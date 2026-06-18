@@ -1,0 +1,392 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Stores > Configuration > Etechflow > Blog.
+ * Every field has a <comment> "how to use" hint, as requested.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="etechflow" translate="label" sortOrder="400">
+            <label>Etechflow</label>
+        </tab>
+
+        <section id="etechflow_blog" translate="label" type="text" sortOrder="10"
+                 showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Blog</label>
+            <tab>etechflow</tab>
+            <resource>Etechflow_Blog::config</resource>
+
+            <!-- ============ GENERAL ============ -->
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Blog</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Master on/off switch. When set to No the whole blog (all /blog URLs) becomes unavailable.</comment>
+                </field>
+                <field id="route" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Blog Base URL Path</label>
+                    <comment>The first part of every blog URL, e.g. "blog" gives /blog, /blog/my-post. Use letters/numbers/hyphens only. Flush cache after changing.</comment>
+                </field>
+                <field id="title" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Blog Title</label>
+                    <comment>Shown as the H1 / page title on the blog home page and used in the breadcrumb.</comment>
+                </field>
+                <field id="posts_per_page" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Posts Per Page</label>
+                    <validate>validate-number validate-greater-than-zero</validate>
+                    <comment>How many posts appear on each listing page before pagination kicks in. Recommended 9–12.</comment>
+                </field>
+                <field id="show_short_content" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Excerpt In Listings</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show a short preview of each post in listing grids. If a post has no manual excerpt, one is generated automatically.</comment>
+                </field>
+                <field id="short_content_limit" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Auto Excerpt Length (characters)</label>
+                    <depends><field id="show_short_content">1</field></depends>
+                    <comment>Maximum length of an auto-generated excerpt when a post has no manual short content.</comment>
+                </field>
+                <field id="show_in_top_menu" translate="label comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add Blog Link To Top Menu</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Adds a link to the blog in the storefront main navigation menu.</comment>
+                </field>
+                <field id="top_menu_text" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Top Menu Link Text</label>
+                    <depends><field id="show_in_top_menu">1</field></depends>
+                    <comment>The wording of the menu link, e.g. "Blog", "News", "Guides".</comment>
+                </field>
+            </group>
+
+            <!-- ============ DESIGN ============ -->
+            <group id="design" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Design</label>
+                <field id="featured_post" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Highlight First Post As "Featured"</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Displays the newest post as a large featured card above the grid on the blog home page.</comment>
+                </field>
+                <field id="grid_columns" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Listing Grid Columns (desktop)</label>
+                    <validate>validate-number validate-greater-than-zero</validate>
+                    <comment>Number of post cards per row on desktop (e.g. 3). Automatically reduces on tablet/mobile.</comment>
+                </field>
+            </group>
+
+            <!-- ============ POST PAGE ============ -->
+            <group id="post_view" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Post Page</label>
+                <field id="breadcrumbs" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Breadcrumbs</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show the Home › Blog › Category › Post trail. Recommended on for navigation and SEO.</comment>
+                </field>
+                <field id="show_featured_image" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Featured Image On Post</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Display the post's featured image at the top of the article.</comment>
+                </field>
+                <field id="reading_time" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Reading Time</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Shows an estimated "X min read" based on word count.</comment>
+                </field>
+                <field id="reading_progress_bar" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Reading Progress Bar</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>A thin bar at the top of the screen that fills as the reader scrolls through the article.</comment>
+                </field>
+                <field id="views_count" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Count &amp; Show Views</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Tracks how many times each post is read and powers the "Popular posts" widget.</comment>
+                </field>
+                <field id="table_of_contents" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Auto Table Of Contents</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Builds a jump-to list from the headings (H2/H3) in the post body. Best for long articles.</comment>
+                </field>
+                <field id="author_box" translate="label comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Author Box</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Shows the author's name, photo and bio under the article with a link to their page.</comment>
+                </field>
+                <field id="post_tags" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Tags</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Displays the post's tags as clickable chips at the end of the article.</comment>
+                </field>
+                <field id="next_prev" translate="label comment" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Previous/Next Navigation</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Links to the previous and next posts so readers keep browsing.</comment>
+                </field>
+                <field id="gallery" translate="label comment" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Image Gallery + Lightbox</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Renders the post's gallery images in a grid that opens in a full-screen lightbox on click.</comment>
+                </field>
+            </group>
+
+            <!-- ============ RELATED POSTS ============ -->
+            <group id="related_posts" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Related Posts</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Related Posts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show a "You may also like" block. Uses posts you pick manually, then fills up by shared category/tag.</comment>
+                </field>
+                <field id="number" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Number To Show</label>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>Maximum related posts to display.</comment>
+                </field>
+            </group>
+
+            <!-- ============ RELATED PRODUCTS ============ -->
+            <group id="related_products" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Related Products</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Related Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show catalog products linked to a post — turns articles into a sales channel.</comment>
+                </field>
+                <field id="number" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Number To Show</label>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>Maximum products to display under the article.</comment>
+                </field>
+            </group>
+
+            <!-- ============ SOCIAL SHARE ============ -->
+            <group id="social_share" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Social Sharing</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Share Buttons</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Lightweight, no-tracking share buttons (plain links, no third-party scripts).</comment>
+                </field>
+                <field id="networks" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Networks</label>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>Comma-separated list, in order. Supported: facebook, twitter, linkedin, whatsapp, pinterest, email.</comment>
+                </field>
+            </group>
+
+            <!-- ============ COMMENTS ============ -->
+            <group id="comments" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Comments</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Comments</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Allow readers to comment on posts. Can also be turned off per-post.</comment>
+                </field>
+                <field id="allow_guest" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Allow Guest Comments</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>If No, only logged-in customers can comment.</comment>
+                </field>
+                <field id="moderation" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Hold New Comments For Approval</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>If Yes, comments stay hidden until you approve them in Blog › Comments. Strongly recommended.</comment>
+                </field>
+                <field id="nested" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Allow Replies (threaded)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>Lets readers reply to a specific comment, shown indented underneath.</comment>
+                </field>
+                <field id="recaptcha" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Protect Form With reCAPTCHA</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>Adds spam protection. Requires Magento's reCAPTCHA keys to be configured under Security.</comment>
+                </field>
+                <field id="per_page" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Comments Per Page</label>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>How many top-level comments to show before "load more".</comment>
+                </field>
+            </group>
+
+            <!-- ============ SIDEBAR ============ -->
+            <group id="sidebar" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Sidebar Widgets</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Sidebar</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Master toggle for the blog sidebar. Each widget below can also be turned on/off.</comment>
+                </field>
+                <field id="search" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Search Box</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>A box to search blog posts.</comment>
+                </field>
+                <field id="categories" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Categories List</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>Lists blog categories with a post count badge.</comment>
+                </field>
+                <field id="recent_posts" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Recent Posts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>Shows the newest posts with thumbnails.</comment>
+                </field>
+                <field id="recent_posts_count" translate="label comment" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Recent Posts Count</label>
+                    <depends><field id="enabled">1</field><field id="recent_posts">1</field></depends>
+                    <comment>How many recent posts to list.</comment>
+                </field>
+                <field id="popular_posts" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Popular Posts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>Shows most-viewed posts (requires "Count &amp; Show Views" enabled).</comment>
+                </field>
+                <field id="popular_posts_count" translate="label comment" type="text" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Popular Posts Count</label>
+                    <depends><field id="enabled">1</field><field id="popular_posts">1</field></depends>
+                    <comment>How many popular posts to list.</comment>
+                </field>
+                <field id="archive" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Archive (by month)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>Month-by-month links to older posts.</comment>
+                </field>
+                <field id="tag_cloud" translate="label comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Tag Cloud</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>A cloud of tag chips linking to tag pages.</comment>
+                </field>
+                <field id="rss" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>RSS Link</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>A "Subscribe via RSS" link in the sidebar.</comment>
+                </field>
+            </group>
+
+            <!-- ============ SEO ============ -->
+            <group id="seo" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>SEO</label>
+                <field id="use_canonical" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add Canonical Tags</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Adds rel="canonical" to every blog page to prevent duplicate-content penalties.</comment>
+                </field>
+                <field id="json_ld" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add JSON-LD Structured Data</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Outputs BlogPosting / Person schema so Google can show rich results.</comment>
+                </field>
+                <field id="opengraph" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add Open Graph Tags</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Controls how posts look when shared on Facebook/LinkedIn (title, image, description).</comment>
+                </field>
+                <field id="twitter_cards" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add Twitter Card Tags</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Controls how posts look when shared on X/Twitter.</comment>
+                </field>
+                <field id="breadcrumbs_schema" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add Breadcrumb Schema</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Outputs BreadcrumbList structured data for breadcrumb rich results in Google.</comment>
+                </field>
+                <field id="include_in_sitemap" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include Blog In XML Sitemap</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Adds blog posts/categories to Magento's XML sitemap so search engines discover them.</comment>
+                </field>
+            </group>
+
+            <!-- ============ RSS ============ -->
+            <group id="rss" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>RSS Feed</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable RSS Feed</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Publishes a feed at /blog/rss that readers and aggregators can subscribe to.</comment>
+                </field>
+                <field id="posts_limit" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Posts In Feed</label>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>How many of the latest posts to include in the feed.</comment>
+                </field>
+            </group>
+
+            <!-- ============ PRODUCT PAGE ============ -->
+            <group id="product_page" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Product Page Integration</label>
+                <field id="related_posts" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Related Blog Posts On Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Displays blog posts linked to a product on its product page (great for buying guides).</comment>
+                </field>
+                <field id="related_posts_count" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Number To Show</label>
+                    <depends><field id="related_posts">1</field></depends>
+                    <comment>Maximum related posts to show on a product page.</comment>
+                </field>
+            </group>
+
+            <!-- ============ MEDIA / BANNERS / CLOUDINARY ============ -->
+            <group id="banners" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Responsive Banners</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Per-Post Banner Images</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Adds desktop/tablet/mobile banner upload fields to each post so the hero looks sharp on every device.</comment>
+                </field>
+            </group>
+
+            <group id="cloudinary" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Cloudinary (optional)</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Serve Images Through Cloudinary</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If you use the Cloudinary integration, blog images are delivered optimized/responsive via Cloudinary.</comment>
+                </field>
+                <field id="quality" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Image Quality</label>
+                    <depends><field id="enabled">1</field></depends>
+                    <comment>Cloudinary quality setting, e.g. "auto" (recommended) or a number 1–100.</comment>
+                </field>
+            </group>
+
+            <!-- ============ PERFORMANCE ============ -->
+            <group id="performance" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Performance</label>
+                <field id="lazy_load_images" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Lazy-Load Images</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Below-the-fold images load only as the reader scrolls, speeding up first paint. Keep on.</comment>
+                </field>
+                <field id="defer_js" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Defer Blog JavaScript</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Loads the small blog JS without blocking rendering. Keep on unless debugging.</comment>
+                </field>
+                <field id="minify_inline_css" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Minify Inline CSS</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Strips whitespace from the blog's scoped inline CSS to shave a few KB off each page.</comment>
+                </field>
+            </group>
+
+        </section>
+    </system>
+</config>

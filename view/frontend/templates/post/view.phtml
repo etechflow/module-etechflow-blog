@@ -1,0 +1,203 @@
+<?php
+/**
+ * Single blog post. Server-rendered (SEO-friendly); the tiny vanilla blog.js
+ * progressively enhances the reading-progress bar, TOC scroll-spy, gallery
+ * lightbox and comment form. Theme-agnostic scoped .etf- markup.
+ *
+ * @var \Etechflow\Blog\Block\Post $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+/** @var \Etechflow\Blog\ViewModel\Config $vm */
+$vm   = $block->getData('view_model');
+$url  = $block->getUrlModel();
+$post = $block->getPost();
+if (!$post) { return; }
+
+$postUrl  = $url->getPostUrl($post);
+$author   = $vm->isFlag('post_view/author_box') ? $block->getAuthor() : null;
+$cats     = $block->getCategories();
+$firstCat = $cats ? reset($cats) : null;
+$toc      = $vm->isFlag('post_view/table_of_contents') ? $block->getTableOfContents() : [];
+$feat     = $vm->imageUrl((string)$post->getData('featured_img'));
+$lazyAttr = $vm->lazyImages() ? ' loading="lazy"' : '';
+
+$renderComments = static function (array $nodes, callable $self) use ($escaper) {
+    echo '<ul class="etf-comment-list">';
+    foreach ($nodes as $node) {
+        /** @var \Etechflow\Blog\Model\Comment $c */
+        $c = $node['comment'];
+        echo '<li class="etf-comment">';
+        echo '<div class="etf-comment-head"><span class="etf-comment-author">'
+            . $escaper->escapeHtml($c->getData('author_nickname') ?: __('Guest'))
+            . '</span><span class="etf-comment-date">' . $escaper->escapeHtml($c->getData('creation_time')) . '</span></div>';
+        echo '<div class="etf-comment-body">' . $escaper->escapeHtml($c->getData('text')) . '</div>';
+        if (!empty($node['children'])) {
+            $self($node['children'], $self);
+        }
+        echo '</li>';
+    }
+    echo '</ul>';
+};
+?>
+<?php if ($vm->isFlag('post_view/reading_progress_bar')): ?>
+<div class="etf-progress" data-etf-progress aria-hidden="true"><span></span></div>
+<?php endif; ?>
+
+<div class="etf-post etf-blog">
+  <div class="etf-container">
+
+    <?php if ($vm->isFlag('post_view/breadcrumbs')): ?>
+    <nav class="etf-breadcrumb etf-breadcrumb--post" aria-label="<?= $escaper->escapeHtmlAttr(__('Breadcrumb')) ?>">
+      <a href="<?= $escaper->escapeUrl($block->getBaseUrl()) ?>"><?= $escaper->escapeHtml(__('Home')) ?></a>
+      <span aria-hidden="true">›</span>
+      <a href="<?= $escaper->escapeUrl($url->getBaseUrl()) ?>"><?= $escaper->escapeHtml($vm->blogTitle()) ?></a>
+      <?php if ($firstCat): ?>
+        <span aria-hidden="true">›</span>
+        <a href="<?= $escaper->escapeUrl($url->getCategoryUrl($firstCat)) ?>"><?= $escaper->escapeHtml($firstCat->getData('title')) ?></a>
+      <?php endif; ?>
+      <span aria-hidden="true">›</span>
+      <span class="etf-current"><?= $escaper->escapeHtml($post->getTitle()) ?></span>
+    </nav>
+    <?php endif; ?>
+
+    <div class="etf-layout">
+      <aside class="etf-sidebar"><?= /* @noEscape */ $block->getChildHtml('sidebar') ?></aside>
+
+      <article class="etf-article">
+        <header class="etf-article-head">
+          <?php if ($firstCat): ?>
+            <a class="etf-cat-chip" href="<?= $escaper->escapeUrl($url->getCategoryUrl($firstCat)) ?>"><?= $escaper->escapeHtml($firstCat->getData('title')) ?></a>
+          <?php endif; ?>
+          <h1 class="etf-article-title"><?= $escaper->escapeHtml($post->getData('content_heading') ?: $post->getTitle()) ?></h1>
+          <div class="etf-article-meta">
+            <?php if ($author): ?>
+              <a class="etf-by" href="<?= $escaper->escapeUrl($url->getAuthorUrl($author)) ?>"><?= $escaper->escapeHtml(__('By %1', $author->getTitle())) ?></a>
+            <?php endif; ?>
+            <span class="etf-date"><?= $escaper->escapeHtml($block->formatDate($post->getData('publish_time'), \IntlDateFormatter::MEDIUM)) ?></span>
+            <?php if ($vm->isFlag('post_view/reading_time')): ?>
+              <span class="etf-readtime"><?= $escaper->escapeHtml(__('%1 min read', $block->getReadingTime())) ?></span>
+            <?php endif; ?>
+            <?php if ($vm->isFlag('post_view/views_count')): ?>
+              <span class="etf-views"><?= $escaper->escapeHtml(__('%1 views', (int)$post->getData('views_count'))) ?></span>
+            <?php endif; ?>
+          </div>
+        </header>
+
+        <?php if ($vm->isFlag('post_view/show_featured_image') && $feat): ?>
+          <div class="etf-article-img">
+            <img src="<?= $escaper->escapeUrl($feat) ?>" alt="<?= $escaper->escapeHtmlAttr($post->getTitle()) ?>" fetchpriority="high">
+          </div>
+        <?php endif; ?>
+
+        <?php if ($toc): ?>
+          <nav class="etf-toc" data-etf-toc aria-label="<?= $escaper->escapeHtmlAttr(__('Table of contents')) ?>">
+            <p class="etf-toc-title"><?= $escaper->escapeHtml(__('Contents')) ?></p>
+            <ul>
+              <?php foreach ($toc as $h): ?>
+                <li class="etf-toc-l<?= (int)$h['level'] ?>"><a href="#<?= $escaper->escapeHtmlAttr($h['id']) ?>"><?= $escaper->escapeHtml($h['text']) ?></a></li>
+              <?php endforeach; ?>
+            </ul>
+          </nav>
+        <?php endif; ?>
+
+        <div class="etf-content" data-etf-gallery="<?= $vm->isFlag('post_view/gallery') ? '1' : '0' ?>">
+          <?= /* @noEscape */ $block->getContent() ?>
+        </div>
+
+        <?php $tags = $vm->isFlag('post_view/post_tags') ? $block->getTags() : []; ?>
+        <?php if ($tags): ?>
+          <div class="etf-tags">
+            <span class="etf-tags-label"><?= $escaper->escapeHtml(__('Tags:')) ?></span>
+            <?php foreach ($tags as $tag): ?>
+              <a class="etf-tag" href="<?= $escaper->escapeUrl($url->getTagUrl($tag)) ?>"><?= $escaper->escapeHtml($tag->getData('title')) ?></a>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if ($vm->isFlag('social_share/enabled')): ?>
+          <div class="etf-share">
+            <span class="etf-share-label"><?= $escaper->escapeHtml(__('Share:')) ?></span>
+            <?php foreach ($vm->socialNetworks() as $net): ?>
+              <a class="etf-share-btn etf-share-<?= $escaper->escapeHtmlAttr($net) ?>" rel="nofollow noopener" target="_blank"
+                 href="<?= $escaper->escapeUrl($block->getShareUrl($net, $postUrl, $post->getTitle())) ?>"><?= $escaper->escapeHtml(ucfirst($net)) ?></a>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if ($author): ?>
+          <section class="etf-authorbox">
+            <?php $aImg = $vm->imageUrl((string)$author->getData('image')); ?>
+            <?php if ($aImg): ?><img class="etf-authorbox-img" src="<?= $escaper->escapeUrl($aImg) ?>" alt="<?= $escaper->escapeHtmlAttr($author->getTitle()) ?>"<?= /* @noEscape */ $lazyAttr ?>><?php endif; ?>
+            <div class="etf-authorbox-body">
+              <a class="etf-authorbox-name" href="<?= $escaper->escapeUrl($url->getAuthorUrl($author)) ?>"><?= $escaper->escapeHtml($author->getTitle()) ?></a>
+              <?php if ($author->getData('content')): ?><p class="etf-authorbox-bio"><?= $escaper->escapeHtml(strip_tags((string)$author->getData('content'))) ?></p><?php endif; ?>
+            </div>
+          </section>
+        <?php endif; ?>
+
+        <?php $relProducts = $vm->isFlag('related_products/enabled') ? $block->getRelatedProducts() : []; ?>
+        <?php if ($relProducts): ?>
+          <section class="etf-related etf-related-products">
+            <h2 class="etf-section-title"><?= $escaper->escapeHtml(__('Related products')) ?></h2>
+            <div class="etf-prod-grid">
+              <?php foreach ($relProducts as $p): ?>
+                <a class="etf-prod" href="<?= $escaper->escapeUrl($p['url']) ?>">
+                  <?php if ($p['image']): ?><img src="<?= $escaper->escapeUrl($p['image']) ?>" alt="<?= $escaper->escapeHtmlAttr($p['name']) ?>"<?= /* @noEscape */ $lazyAttr ?>><?php endif; ?>
+                  <span class="etf-prod-name"><?= $escaper->escapeHtml($p['name']) ?></span>
+                  <span class="etf-prod-price"><?= /* @noEscape */ $p['price'] ?></span>
+                </a>
+              <?php endforeach; ?>
+            </div>
+          </section>
+        <?php endif; ?>
+
+        <?php $relPosts = $vm->isFlag('related_posts/enabled') ? $block->getRelatedPosts() : []; ?>
+        <?php if ($relPosts): ?>
+          <section class="etf-related etf-related-posts">
+            <h2 class="etf-section-title"><?= $escaper->escapeHtml(__('You may also like')) ?></h2>
+            <div class="etf-grid" style="--etf-cols:3">
+              <?php foreach ($relPosts as $rp): $rImg = $vm->imageUrl($rp->getData('featured_list_img') ?: $rp->getData('featured_img')); ?>
+                <a class="etf-card" href="<?= $escaper->escapeUrl($url->getPostUrl($rp)) ?>">
+                  <div class="etf-card-img"><?php if ($rImg): ?><img src="<?= $escaper->escapeUrl($rImg) ?>" alt="<?= $escaper->escapeHtmlAttr($rp->getTitle()) ?>"<?= /* @noEscape */ $lazyAttr ?>><?php endif; ?></div>
+                  <div class="etf-card-body"><h3 class="etf-card-title"><?= $escaper->escapeHtml($rp->getTitle()) ?></h3></div>
+                </a>
+              <?php endforeach; ?>
+            </div>
+          </section>
+        <?php endif; ?>
+
+        <?php if ($vm->isFlag('post_view/next_prev')):
+            $prev = $block->getPrevPost(); $next = $block->getNextPost(); ?>
+          <?php if ($prev || $next): ?>
+          <nav class="etf-nextprev" aria-label="<?= $escaper->escapeHtmlAttr(__('Post navigation')) ?>">
+            <?php if ($prev): ?><a class="etf-np etf-np-prev" href="<?= $escaper->escapeUrl($url->getPostUrl($prev)) ?>"><span><?= $escaper->escapeHtml(__('Previous')) ?></span><strong><?= $escaper->escapeHtml($prev->getTitle()) ?></strong></a><?php else: ?><span></span><?php endif; ?>
+            <?php if ($next): ?><a class="etf-np etf-np-next" href="<?= $escaper->escapeUrl($url->getPostUrl($next)) ?>"><span><?= $escaper->escapeHtml(__('Next')) ?></span><strong><?= $escaper->escapeHtml($next->getTitle()) ?></strong></a><?php endif; ?>
+          </nav>
+          <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if ($vm->isFlag('comments/enabled') && $post->getData('is_comments_enabled')): ?>
+          <section class="etf-comments" id="comments">
+            <h2 class="etf-section-title"><?= $escaper->escapeHtml(__('Comments')) ?></h2>
+            <?php $comments = $block->getComments(); ?>
+            <?php if ($comments): $renderComments($comments, $renderComments); else: ?>
+              <p class="etf-no-comments"><?= $escaper->escapeHtml(__('Be the first to comment.')) ?></p>
+            <?php endif; ?>
+
+            <form class="etf-comment-form" method="post" action="<?= $escaper->escapeUrl($block->getCommentPostUrl()) ?>" data-etf-comment-form>
+              <?= /* @noEscape */ $block->getBlockHtml('formkey') ?>
+              <input type="hidden" name="post_id" value="<?= (int)$post->getId() ?>">
+              <input type="hidden" name="parent_id" value="0" data-etf-parent>
+              <div class="etf-form-row">
+                <input type="text" name="author_nickname" placeholder="<?= $escaper->escapeHtmlAttr(__('Your name')) ?>" required>
+                <input type="email" name="author_email" placeholder="<?= $escaper->escapeHtmlAttr(__('Your email (not published)')) ?>" required>
+              </div>
+              <textarea name="text" rows="4" placeholder="<?= $escaper->escapeHtmlAttr(__('Write a comment…')) ?>" required></textarea>
+              <button type="submit" class="etf-btn"><?= $escaper->escapeHtml(__('Post comment')) ?></button>
+            </form>
+          </section>
+        <?php endif; ?>
+      </article>
+    </div>
+  </div>
+</div>

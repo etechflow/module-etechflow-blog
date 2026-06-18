@@ -1,0 +1,347 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Etechflow_Blog declarative database schema.
+ * Entities: Post, Category, Tag, Author, Comment + link/relation tables + per-store visibility tables.
+ * All content tables carry full SEO columns (meta title/keywords/description/robots) and clean URL identifiers.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <!-- ============================ POST ============================ -->
+    <table name="etechflow_blog_post" resource="default" engine="innodb" comment="Etechflow Blog Posts">
+        <column xsi:type="int" name="post_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Post ID"/>
+        <column xsi:type="smallint" name="is_active" padding="5" unsigned="true" nullable="false" default="1" comment="Status: 0 disabled, 1 enabled"/>
+        <column xsi:type="smallint" name="include_in_recent" padding="5" unsigned="true" nullable="false" default="1" comment="Include in recent/featured lists"/>
+        <column xsi:type="int" name="position" padding="10" nullable="false" default="0" comment="Sort position"/>
+        <column xsi:type="varchar" name="title" nullable="false" length="255" comment="Post title"/>
+        <column xsi:type="varchar" name="identifier" nullable="false" length="255" comment="URL key / permalink slug"/>
+        <column xsi:type="varchar" name="meta_title" nullable="true" length="255" comment="SEO meta title"/>
+        <column xsi:type="text" name="meta_keywords" nullable="true" comment="SEO meta keywords"/>
+        <column xsi:type="text" name="meta_description" nullable="true" comment="SEO meta description"/>
+        <column xsi:type="varchar" name="meta_robots" nullable="true" length="50" comment="Robots meta, e.g. INDEX,FOLLOW"/>
+        <column xsi:type="varchar" name="content_heading" nullable="true" length="255" comment="On-page H1 heading (falls back to title)"/>
+        <column xsi:type="mediumtext" name="content" nullable="true" comment="Post body (WYSIWYG/HTML)"/>
+        <column xsi:type="text" name="short_content" nullable="true" comment="Excerpt / short content for listings"/>
+        <column xsi:type="varchar" name="featured_img" nullable="true" length="255" comment="Featured image path"/>
+        <column xsi:type="varchar" name="featured_list_img" nullable="true" length="255" comment="Listing thumbnail (optional, defaults to featured_img)"/>
+        <column xsi:type="varchar" name="og_img" nullable="true" length="255" comment="Open Graph image"/>
+        <column xsi:type="varchar" name="og_title" nullable="true" length="255" comment="Open Graph title"/>
+        <column xsi:type="text" name="og_description" nullable="true" comment="Open Graph description"/>
+        <column xsi:type="varchar" name="og_type" nullable="true" length="50" default="article" comment="Open Graph type"/>
+        <column xsi:type="mediumtext" name="media_gallery" nullable="true" comment="JSON gallery image list"/>
+        <column xsi:type="int" name="author_id" padding="10" unsigned="true" nullable="true" comment="Author ID (FK)"/>
+        <column xsi:type="smallint" name="is_comments_enabled" padding="5" unsigned="true" nullable="false" default="1" comment="Allow comments on this post"/>
+        <column xsi:type="int" name="views_count" padding="10" unsigned="true" nullable="false" default="0" comment="Number of views"/>
+        <column xsi:type="timestamp" name="creation_time" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
+        <column xsi:type="timestamp" name="update_time" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated at"/>
+        <column xsi:type="datetime" name="publish_time" nullable="true" comment="Publish date/time (for scheduling)"/>
+        <column xsi:type="varchar" name="layout" nullable="true" length="255" comment="Page layout (e.g. 1column, 2columns-right)"/>
+        <column xsi:type="varchar" name="custom_theme" nullable="true" length="100" comment="Custom theme override"/>
+        <column xsi:type="varchar" name="custom_layout" nullable="true" length="255" comment="Custom layout override"/>
+        <column xsi:type="mediumtext" name="custom_layout_update_xml" nullable="true" comment="Custom layout update XML"/>
+        <column xsi:type="date" name="custom_theme_from" nullable="true" comment="Custom theme active from"/>
+        <column xsi:type="date" name="custom_theme_to" nullable="true" comment="Custom theme active to"/>
+        <column xsi:type="varchar" name="secret" nullable="true" length="32" comment="Preview secret token"/>
+        <column xsi:type="varchar" name="banner_img_desktop" nullable="true" length="255" comment="Responsive banner image — desktop"/>
+        <column xsi:type="varchar" name="banner_img_tablet" nullable="true" length="255" comment="Responsive banner image — tablet"/>
+        <column xsi:type="varchar" name="banner_img_mobile" nullable="true" length="255" comment="Responsive banner image — mobile"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="post_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_POST_AUTHOR_ID_ETF_BLOG_AUTHOR_AUTHOR_ID"
+                    table="etechflow_blog_post" column="author_id"
+                    referenceTable="etechflow_blog_author" referenceColumn="author_id" onDelete="SET NULL"/>
+        <index referenceId="ETF_BLOG_POST_IDENTIFIER" indexType="btree">
+            <column name="identifier"/>
+        </index>
+        <index referenceId="ETF_BLOG_POST_IS_ACTIVE_PUBLISH_TIME" indexType="btree">
+            <column name="is_active"/>
+            <column name="publish_time"/>
+        </index>
+        <index referenceId="ETF_BLOG_POST_AUTHOR_ID" indexType="btree">
+            <column name="author_id"/>
+        </index>
+        <index referenceId="ETF_BLOG_POST_FULLTEXT" indexType="fulltext">
+            <column name="title"/>
+            <column name="meta_keywords"/>
+            <column name="meta_description"/>
+            <column name="content"/>
+            <column name="short_content"/>
+        </index>
+    </table>
+
+    <!-- ============================ CATEGORY ============================ -->
+    <table name="etechflow_blog_category" resource="default" engine="innodb" comment="Etechflow Blog Categories">
+        <column xsi:type="int" name="category_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Category ID"/>
+        <column xsi:type="int" name="parent_id" padding="10" unsigned="true" nullable="false" default="0" comment="Parent category ID"/>
+        <column xsi:type="varchar" name="path" nullable="true" length="255" comment="Materialized path e.g. 1/3/7"/>
+        <column xsi:type="int" name="position" padding="10" nullable="false" default="0" comment="Sort position"/>
+        <column xsi:type="int" name="level" padding="10" unsigned="true" nullable="false" default="0" comment="Tree level"/>
+        <column xsi:type="smallint" name="is_active" padding="5" unsigned="true" nullable="false" default="1" comment="Status"/>
+        <column xsi:type="smallint" name="include_in_menu" padding="5" unsigned="true" nullable="false" default="1" comment="Show in blog top menu"/>
+        <column xsi:type="varchar" name="title" nullable="false" length="255" comment="Category title"/>
+        <column xsi:type="varchar" name="identifier" nullable="false" length="255" comment="URL key"/>
+        <column xsi:type="varchar" name="meta_title" nullable="true" length="255" comment="SEO meta title"/>
+        <column xsi:type="text" name="meta_keywords" nullable="true" comment="SEO meta keywords"/>
+        <column xsi:type="text" name="meta_description" nullable="true" comment="SEO meta description"/>
+        <column xsi:type="varchar" name="meta_robots" nullable="true" length="50" comment="Robots meta"/>
+        <column xsi:type="varchar" name="content_heading" nullable="true" length="255" comment="On-page heading"/>
+        <column xsi:type="mediumtext" name="content" nullable="true" comment="Category description (HTML)"/>
+        <column xsi:type="varchar" name="display_mode" nullable="false" length="50" default="POSTS" comment="POSTS | PAGE | POSTS_AND_PAGE"/>
+        <column xsi:type="varchar" name="posts_sort_by" nullable="true" length="50" comment="Default post sort for this category"/>
+        <column xsi:type="timestamp" name="creation_time" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
+        <column xsi:type="timestamp" name="update_time" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated at"/>
+        <column xsi:type="varchar" name="layout" nullable="true" length="255" comment="Page layout"/>
+        <column xsi:type="varchar" name="custom_layout_update_xml" nullable="true" length="255" comment="Custom layout update"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="category_id"/>
+        </constraint>
+        <index referenceId="ETF_BLOG_CATEGORY_IDENTIFIER" indexType="btree">
+            <column name="identifier"/>
+        </index>
+        <index referenceId="ETF_BLOG_CATEGORY_PARENT_ID" indexType="btree">
+            <column name="parent_id"/>
+        </index>
+        <index referenceId="ETF_BLOG_CATEGORY_IS_ACTIVE" indexType="btree">
+            <column name="is_active"/>
+        </index>
+    </table>
+
+    <!-- ============================ TAG ============================ -->
+    <table name="etechflow_blog_tag" resource="default" engine="innodb" comment="Etechflow Blog Tags">
+        <column xsi:type="int" name="tag_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Tag ID"/>
+        <column xsi:type="smallint" name="is_active" padding="5" unsigned="true" nullable="false" default="1" comment="Status"/>
+        <column xsi:type="varchar" name="title" nullable="false" length="255" comment="Tag title"/>
+        <column xsi:type="varchar" name="identifier" nullable="false" length="255" comment="URL key"/>
+        <column xsi:type="varchar" name="meta_title" nullable="true" length="255" comment="SEO meta title"/>
+        <column xsi:type="text" name="meta_keywords" nullable="true" comment="SEO meta keywords"/>
+        <column xsi:type="text" name="meta_description" nullable="true" comment="SEO meta description"/>
+        <column xsi:type="varchar" name="content_heading" nullable="true" length="255" comment="On-page heading"/>
+        <column xsi:type="mediumtext" name="content" nullable="true" comment="Tag description (HTML)"/>
+        <column xsi:type="timestamp" name="creation_time" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
+        <column xsi:type="timestamp" name="update_time" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated at"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="tag_id"/>
+        </constraint>
+        <index referenceId="ETF_BLOG_TAG_IDENTIFIER" indexType="btree">
+            <column name="identifier"/>
+        </index>
+        <index referenceId="ETF_BLOG_TAG_IS_ACTIVE" indexType="btree">
+            <column name="is_active"/>
+        </index>
+    </table>
+
+    <!-- ============================ AUTHOR ============================ -->
+    <table name="etechflow_blog_author" resource="default" engine="innodb" comment="Etechflow Blog Authors">
+        <column xsi:type="int" name="author_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Author ID"/>
+        <column xsi:type="smallint" name="is_active" padding="5" unsigned="true" nullable="false" default="1" comment="Status"/>
+        <column xsi:type="int" name="customer_id" padding="10" unsigned="true" nullable="true" comment="Linked customer ID (optional)"/>
+        <column xsi:type="varchar" name="identifier" nullable="false" length="255" comment="URL key"/>
+        <column xsi:type="varchar" name="title" nullable="false" length="255" comment="Display name"/>
+        <column xsi:type="varchar" name="first_name" nullable="true" length="255" comment="First name"/>
+        <column xsi:type="varchar" name="last_name" nullable="true" length="255" comment="Last name"/>
+        <column xsi:type="varchar" name="email" nullable="true" length="255" comment="Email"/>
+        <column xsi:type="varchar" name="image" nullable="true" length="255" comment="Avatar image path"/>
+        <column xsi:type="mediumtext" name="content" nullable="true" comment="Author bio (HTML)"/>
+        <column xsi:type="varchar" name="meta_title" nullable="true" length="255" comment="SEO meta title"/>
+        <column xsi:type="text" name="meta_keywords" nullable="true" comment="SEO meta keywords"/>
+        <column xsi:type="text" name="meta_description" nullable="true" comment="SEO meta description"/>
+        <column xsi:type="varchar" name="facebook" nullable="true" length="255" comment="Facebook URL"/>
+        <column xsi:type="varchar" name="twitter" nullable="true" length="255" comment="X / Twitter URL"/>
+        <column xsi:type="varchar" name="linkedin" nullable="true" length="255" comment="LinkedIn URL"/>
+        <column xsi:type="varchar" name="instagram" nullable="true" length="255" comment="Instagram URL"/>
+        <column xsi:type="varchar" name="website" nullable="true" length="255" comment="Website URL"/>
+        <column xsi:type="varchar" name="type" nullable="true" length="50" comment="Author type/role label"/>
+        <column xsi:type="timestamp" name="creation_time" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
+        <column xsi:type="timestamp" name="update_time" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated at"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="author_id"/>
+        </constraint>
+        <index referenceId="ETF_BLOG_AUTHOR_IDENTIFIER" indexType="btree">
+            <column name="identifier"/>
+        </index>
+        <index referenceId="ETF_BLOG_AUTHOR_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+    </table>
+
+    <!-- ============================ COMMENT ============================ -->
+    <table name="etechflow_blog_comment" resource="default" engine="innodb" comment="Etechflow Blog Comments">
+        <column xsi:type="int" name="comment_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Comment ID"/>
+        <column xsi:type="int" name="post_id" padding="10" unsigned="true" nullable="false" comment="Post ID (FK)"/>
+        <column xsi:type="int" name="parent_id" padding="10" unsigned="true" nullable="false" default="0" comment="Parent comment ID (nested replies)"/>
+        <column xsi:type="int" name="customer_id" padding="10" unsigned="true" nullable="true" comment="Customer ID if logged in"/>
+        <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false" default="0" comment="Store view"/>
+        <column xsi:type="smallint" name="status" padding="5" unsigned="true" nullable="false" default="0" comment="0 pending, 1 approved, 2 not approved/spam"/>
+        <column xsi:type="smallint" name="author_type" padding="5" unsigned="true" nullable="false" default="0" comment="0 guest, 1 customer, 2 admin"/>
+        <column xsi:type="varchar" name="author_nickname" nullable="true" length="255" comment="Guest display name"/>
+        <column xsi:type="varchar" name="author_email" nullable="true" length="255" comment="Guest email"/>
+        <column xsi:type="text" name="text" nullable="false" comment="Comment body"/>
+        <column xsi:type="text" name="admin_reply" nullable="true" comment="Admin reply text"/>
+        <column xsi:type="timestamp" name="creation_time" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="comment_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_COMMENT_POST_ID_ETF_BLOG_POST_POST_ID"
+                    table="etechflow_blog_comment" column="post_id"
+                    referenceTable="etechflow_blog_post" referenceColumn="post_id" onDelete="CASCADE"/>
+        <index referenceId="ETF_BLOG_COMMENT_POST_ID" indexType="btree">
+            <column name="post_id"/>
+        </index>
+        <index referenceId="ETF_BLOG_COMMENT_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+        <index referenceId="ETF_BLOG_COMMENT_PARENT_ID" indexType="btree">
+            <column name="parent_id"/>
+        </index>
+    </table>
+
+    <!-- ==================== LINK: POST <-> CATEGORY ==================== -->
+    <table name="etechflow_blog_post_category" resource="default" engine="innodb" comment="Post to Category link">
+        <column xsi:type="int" name="post_id" padding="10" unsigned="true" nullable="false" comment="Post ID"/>
+        <column xsi:type="int" name="category_id" padding="10" unsigned="true" nullable="false" comment="Category ID"/>
+        <column xsi:type="int" name="position" padding="10" nullable="false" default="0" comment="Position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="post_id"/>
+            <column name="category_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_PCAT_POST_ID_ETF_BLOG_POST_POST_ID"
+                    table="etechflow_blog_post_category" column="post_id"
+                    referenceTable="etechflow_blog_post" referenceColumn="post_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_PCAT_CAT_ID_ETF_BLOG_CATEGORY_CAT_ID"
+                    table="etechflow_blog_post_category" column="category_id"
+                    referenceTable="etechflow_blog_category" referenceColumn="category_id" onDelete="CASCADE"/>
+        <index referenceId="ETF_BLOG_PCAT_CATEGORY_ID" indexType="btree">
+            <column name="category_id"/>
+        </index>
+    </table>
+
+    <!-- ==================== LINK: POST <-> TAG ==================== -->
+    <table name="etechflow_blog_post_tag" resource="default" engine="innodb" comment="Post to Tag link">
+        <column xsi:type="int" name="post_id" padding="10" unsigned="true" nullable="false" comment="Post ID"/>
+        <column xsi:type="int" name="tag_id" padding="10" unsigned="true" nullable="false" comment="Tag ID"/>
+        <column xsi:type="int" name="position" padding="10" nullable="false" default="0" comment="Position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="post_id"/>
+            <column name="tag_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_PTAG_POST_ID_ETF_BLOG_POST_POST_ID"
+                    table="etechflow_blog_post_tag" column="post_id"
+                    referenceTable="etechflow_blog_post" referenceColumn="post_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_PTAG_TAG_ID_ETF_BLOG_TAG_TAG_ID"
+                    table="etechflow_blog_post_tag" column="tag_id"
+                    referenceTable="etechflow_blog_tag" referenceColumn="tag_id" onDelete="CASCADE"/>
+        <index referenceId="ETF_BLOG_PTAG_TAG_ID" indexType="btree">
+            <column name="tag_id"/>
+        </index>
+    </table>
+
+    <!-- ==================== LINK: POST <-> RELATED POST ==================== -->
+    <table name="etechflow_blog_post_relatedpost" resource="default" engine="innodb" comment="Related posts link">
+        <column xsi:type="int" name="post_id" padding="10" unsigned="true" nullable="false" comment="Post ID"/>
+        <column xsi:type="int" name="related_id" padding="10" unsigned="true" nullable="false" comment="Related Post ID"/>
+        <column xsi:type="int" name="position" padding="10" nullable="false" default="0" comment="Position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="post_id"/>
+            <column name="related_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_PRP_POST_ID_ETF_BLOG_POST_POST_ID"
+                    table="etechflow_blog_post_relatedpost" column="post_id"
+                    referenceTable="etechflow_blog_post" referenceColumn="post_id" onDelete="CASCADE"/>
+    </table>
+
+    <!-- ==================== LINK: POST <-> RELATED PRODUCT ==================== -->
+    <table name="etechflow_blog_post_relatedproduct" resource="default" engine="innodb" comment="Related products link">
+        <column xsi:type="int" name="post_id" padding="10" unsigned="true" nullable="false" comment="Post ID"/>
+        <column xsi:type="int" name="related_id" padding="10" unsigned="true" nullable="false" comment="Catalog product entity ID"/>
+        <column xsi:type="int" name="position" padding="10" nullable="false" default="0" comment="Position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="post_id"/>
+            <column name="related_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_PRPR_POST_ID_ETF_BLOG_POST_POST_ID"
+                    table="etechflow_blog_post_relatedproduct" column="post_id"
+                    referenceTable="etechflow_blog_post" referenceColumn="post_id" onDelete="CASCADE"/>
+    </table>
+
+    <!-- ==================== PER-STORE VISIBILITY ==================== -->
+    <table name="etechflow_blog_post_store" resource="default" engine="innodb" comment="Post store views">
+        <column xsi:type="int" name="post_id" padding="10" unsigned="true" nullable="false" comment="Post ID"/>
+        <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false" comment="Store ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="post_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_PSTORE_POST_ID_ETF_BLOG_POST_POST_ID"
+                    table="etechflow_blog_post_store" column="post_id"
+                    referenceTable="etechflow_blog_post" referenceColumn="post_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_PSTORE_STORE_ID_STORE_STORE_ID"
+                    table="etechflow_blog_post_store" column="store_id"
+                    referenceTable="store" referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="ETF_BLOG_PSTORE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+
+    <table name="etechflow_blog_category_store" resource="default" engine="innodb" comment="Category store views">
+        <column xsi:type="int" name="category_id" padding="10" unsigned="true" nullable="false" comment="Category ID"/>
+        <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false" comment="Store ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="category_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_CSTORE_CAT_ID_ETF_BLOG_CATEGORY_CAT_ID"
+                    table="etechflow_blog_category_store" column="category_id"
+                    referenceTable="etechflow_blog_category" referenceColumn="category_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_CSTORE_STORE_ID_STORE_STORE_ID"
+                    table="etechflow_blog_category_store" column="store_id"
+                    referenceTable="store" referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="ETF_BLOG_CSTORE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+
+    <table name="etechflow_blog_tag_store" resource="default" engine="innodb" comment="Tag store views">
+        <column xsi:type="int" name="tag_id" padding="10" unsigned="true" nullable="false" comment="Tag ID"/>
+        <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false" comment="Store ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="tag_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_TSTORE_TAG_ID_ETF_BLOG_TAG_TAG_ID"
+                    table="etechflow_blog_tag_store" column="tag_id"
+                    referenceTable="etechflow_blog_tag" referenceColumn="tag_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_TSTORE_STORE_ID_STORE_STORE_ID"
+                    table="etechflow_blog_tag_store" column="store_id"
+                    referenceTable="store" referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="ETF_BLOG_TSTORE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+
+    <table name="etechflow_blog_author_store" resource="default" engine="innodb" comment="Author store views">
+        <column xsi:type="int" name="author_id" padding="10" unsigned="true" nullable="false" comment="Author ID"/>
+        <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false" comment="Store ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="author_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_ASTORE_AUTHOR_ID_ETF_BLOG_AUTHOR_AUTHOR_ID"
+                    table="etechflow_blog_author_store" column="author_id"
+                    referenceTable="etechflow_blog_author" referenceColumn="author_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="ETF_BLOG_ASTORE_STORE_ID_STORE_STORE_ID"
+                    table="etechflow_blog_author_store" column="store_id"
+                    referenceTable="store" referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="ETF_BLOG_ASTORE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+
+</schema>

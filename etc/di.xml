@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Dependency injection: bind service-contract interfaces to their concrete
+ * models/repositories. Search-result interfaces reuse the framework's generic
+ * SearchResults via virtual types (created in Phase 2 along with the classes).
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- ===== Data model interfaces ===== -->
+    <preference for="Etechflow\Blog\Api\Data\PostInterface" type="Etechflow\Blog\Model\Post"/>
+    <preference for="Etechflow\Blog\Api\Data\CategoryInterface" type="Etechflow\Blog\Model\Category"/>
+    <preference for="Etechflow\Blog\Api\Data\TagInterface" type="Etechflow\Blog\Model\Tag"/>
+    <preference for="Etechflow\Blog\Api\Data\AuthorInterface" type="Etechflow\Blog\Model\Author"/>
+    <preference for="Etechflow\Blog\Api\Data\CommentInterface" type="Etechflow\Blog\Model\Comment"/>
+
+    <!-- ===== Repository interfaces ===== -->
+    <preference for="Etechflow\Blog\Api\PostRepositoryInterface" type="Etechflow\Blog\Model\PostRepository"/>
+    <preference for="Etechflow\Blog\Api\CategoryRepositoryInterface" type="Etechflow\Blog\Model\CategoryRepository"/>
+    <preference for="Etechflow\Blog\Api\TagRepositoryInterface" type="Etechflow\Blog\Model\TagRepository"/>
+    <preference for="Etechflow\Blog\Api\AuthorRepositoryInterface" type="Etechflow\Blog\Model\AuthorRepository"/>
+    <preference for="Etechflow\Blog\Api\CommentRepositoryInterface" type="Etechflow\Blog\Model\CommentRepository"/>
+
+    <!-- ===== Search results (generic) ===== -->
+    <preference for="Etechflow\Blog\Api\Data\PostSearchResultsInterface" type="Etechflow\Blog\Model\PostSearchResults"/>
+    <preference for="Etechflow\Blog\Api\Data\CategorySearchResultsInterface" type="Etechflow\Blog\Model\CategorySearchResults"/>
+    <preference for="Etechflow\Blog\Api\Data\TagSearchResultsInterface" type="Etechflow\Blog\Model\TagSearchResults"/>
+    <preference for="Etechflow\Blog\Api\Data\AuthorSearchResultsInterface" type="Etechflow\Blog\Model\AuthorSearchResults"/>
+    <preference for="Etechflow\Blog\Api\Data\CommentSearchResultsInterface" type="Etechflow\Blog\Model\CommentSearchResults"/>
+
+    <!-- ===== XML sitemap: add blog posts + categories ===== -->
+    <type name="Magento\Sitemap\Model\ItemProvider\Composite">
+        <arguments>
+            <argument name="itemProviders" xsi:type="array">
+                <item name="etechflowBlog" xsi:type="object">Etechflow\Blog\Model\Sitemap\ItemProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+</config>

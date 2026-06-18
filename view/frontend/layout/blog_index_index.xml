@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Blog listing layout (home + reused by category/tag/author/archive/search).
+ * Uses the universal 1column layout + "content" container so it renders the
+ * same on Hyvä, Luma and Adobe Commerce; the two-column look is produced by the
+ * block's own scoped CSS, not theme-specific containers.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="etechflow_blog_assets"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Etechflow\Blog\Block\PostList" name="etechflow.blog.list"
+                   template="Etechflow_Blog::post/list.phtml" cacheable="true">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Etechflow\Blog\ViewModel\Config</argument>
+                </arguments>
+                <block class="Etechflow\Blog\Block\Sidebar" name="etechflow.blog.list.sidebar" as="sidebar"
+                       template="Etechflow_Blog::sidebar.phtml">
+                    <arguments>
+                        <argument name="view_model" xsi:type="object">Etechflow\Blog\ViewModel\Config</argument>
+                    </arguments>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

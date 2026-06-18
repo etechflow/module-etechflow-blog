@@ -1,0 +1,28 @@
+<?php
+/**
+ * Related blog posts on a product page.
+ *
+ * @var \Etechflow\Blog\Block\Product\RelatedPosts $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+/** @var \Etechflow\Blog\ViewModel\Config $vm */
+$vm = $block->getData('view_model');
+$posts = $block->getPosts();
+if (!$posts) { return; }
+$url = $block->getUrlModel();
+?>
+<section class="etf-blog etf-product-related">
+  <div class="etf-container" style="padding:1.5rem 0">
+    <h2 class="etf-section-title"><?= $escaper->escapeHtml(__('Related articles')) ?></h2>
+    <div class="etf-grid" style="--etf-cols:3">
+      <?php foreach ($posts as $post): $img = $vm->imageUrl($block->getThumbnail($post)); ?>
+        <a class="etf-card" href="<?= $escaper->escapeUrl($url->getPostUrl($post)) ?>">
+          <div class="etf-card-img">
+            <?php if ($img): ?><img src="<?= $escaper->escapeUrl($img) ?>" alt="<?= $escaper->escapeHtmlAttr($post->getTitle()) ?>" loading="lazy"><?php endif; ?>
+          </div>
+          <div class="etf-card-body"><h3 class="etf-card-title"><?= $escaper->escapeHtml($post->getTitle()) ?></h3></div>
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>

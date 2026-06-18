@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- Adds a "Related articles" block to product pages (config-toggled). -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="etechflow_blog_assets"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Etechflow\Blog\Block\Product\RelatedPosts" name="etechflow.blog.product.related"
+                   template="Etechflow_Blog::product/related.phtml" after="-">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Etechflow\Blog\ViewModel\Config</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

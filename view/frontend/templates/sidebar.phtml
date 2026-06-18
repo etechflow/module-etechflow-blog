@@ -1,0 +1,102 @@
+<?php
+/**
+ * Blog sidebar widgets. Each block respects its config toggle.
+ *
+ * @var \Etechflow\Blog\Block\Sidebar $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+/** @var \Etechflow\Blog\ViewModel\Config $vm */
+$vm  = $block->getData('view_model');
+$url = $block->getUrlModel();
+if (!$vm->isFlag('sidebar/enabled')) { return; }
+?>
+<div class="etf-widgets">
+
+  <?php if ($block->show('search')): ?>
+    <div class="etf-widget">
+      <p class="etf-widget-title"><?= $escaper->escapeHtml(__('Search')) ?></p>
+      <form class="etf-search" method="get" action="<?= $escaper->escapeUrl($url->getSearchUrl()) ?>" data-etf-search>
+        <input type="text" name="q" placeholder="<?= $escaper->escapeHtmlAttr(__('Search posts…')) ?>" aria-label="<?= $escaper->escapeHtmlAttr(__('Search the blog')) ?>">
+        <button type="submit" aria-label="<?= $escaper->escapeHtmlAttr(__('Search')) ?>">⌕</button>
+      </form>
+    </div>
+  <?php endif; ?>
+
+  <?php if ($block->show('categories')): $cats = $block->getCategories(); ?>
+    <?php if ($cats): ?>
+    <div class="etf-widget">
+      <p class="etf-widget-title"><?= $escaper->escapeHtml(__('Categories')) ?></p>
+      <ul class="etf-widget-list">
+        <?php foreach ($cats as $cat): ?>
+          <li>
+            <a href="<?= $escaper->escapeUrl($url->getCategoryUrl($cat)) ?>"><?= $escaper->escapeHtml($cat->getData('title')) ?></a>
+            <span class="etf-count"><?= (int)$cat->getData('posts_count') ?></span>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <?php if ($block->show('recent_posts')): $recent = $block->getRecentPosts(); ?>
+    <?php if ($recent): ?>
+    <div class="etf-widget">
+      <p class="etf-widget-title"><?= $escaper->escapeHtml(__('Recent Posts')) ?></p>
+      <div class="etf-recent">
+        <?php foreach ($recent as $rp): $img = $vm->imageUrl($block->getThumbnail($rp)); ?>
+          <a class="etf-recent-item" href="<?= $escaper->escapeUrl($url->getPostUrl($rp)) ?>">
+            <?php if ($img): ?><img src="<?= $escaper->escapeUrl($img) ?>" alt="<?= $escaper->escapeHtmlAttr($rp->getTitle()) ?>" loading="lazy"><?php endif; ?>
+            <span><?= $escaper->escapeHtml($rp->getTitle()) ?></span>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </div>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <?php if ($block->show('popular_posts')): $popular = $block->getPopularPosts(); ?>
+    <?php if ($popular): ?>
+    <div class="etf-widget">
+      <p class="etf-widget-title"><?= $escaper->escapeHtml(__('Popular Posts')) ?></p>
+      <ul class="etf-widget-list">
+        <?php foreach ($popular as $pp): ?>
+          <li><a href="<?= $escaper->escapeUrl($url->getPostUrl($pp)) ?>"><?= $escaper->escapeHtml($pp->getTitle()) ?></a></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <?php if ($block->show('archive')): $months = $block->getArchiveMonths(); ?>
+    <?php if ($months): ?>
+    <div class="etf-widget">
+      <p class="etf-widget-title"><?= $escaper->escapeHtml(__('Archive')) ?></p>
+      <ul class="etf-widget-list">
+        <?php foreach ($months as $m): ?>
+          <li><a href="<?= $escaper->escapeUrl($m['url']) ?>"><?= $escaper->escapeHtml($m['label']) ?></a><span class="etf-count"><?= (int)$m['count'] ?></span></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <?php if ($block->show('tag_cloud')): $tags = $block->getTags(); ?>
+    <?php if ($tags): ?>
+    <div class="etf-widget">
+      <p class="etf-widget-title"><?= $escaper->escapeHtml(__('Tags')) ?></p>
+      <div class="etf-tagcloud">
+        <?php foreach ($tags as $tag): ?>
+          <a class="etf-tag" href="<?= $escaper->escapeUrl($url->getTagUrl($tag)) ?>"><?= $escaper->escapeHtml($tag->getData('title')) ?></a>
+        <?php endforeach; ?>
+      </div>
+    </div>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <?php if ($block->show('rss')): ?>
+    <div class="etf-widget">
+      <a class="etf-rss" href="<?= $escaper->escapeUrl($url->getRssUrl()) ?>"><?= $escaper->escapeHtml(__('Subscribe via RSS')) ?></a>
+    </div>
+  <?php endif; ?>
+
+</div>

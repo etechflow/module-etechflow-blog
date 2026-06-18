@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Shared blog assets (scoped CSS + tiny vanilla JS). Included by every blog
+ * page handle. Both files are theme-agnostic and depend on no framework.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Etechflow_Blog::css/blog.css"/>
+        <script src="Etechflow_Blog::js/blog.js"/>
+    </head>
+    <body>
+        <referenceContainer name="head.additional">
+            <block class="Etechflow\Blog\Block\Html\Head" name="etechflow.blog.seo.head"
+                   template="Etechflow_Blog::html/head.phtml" cacheable="true"/>
+        </referenceContainer>
+    </body>
+</page>

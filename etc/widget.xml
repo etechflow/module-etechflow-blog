@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- "Blog Recent Posts" widget — insertable into CMS pages/blocks and layout. -->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="etechflow_blog_recent_posts"
+            class="Etechflow\Blog\Block\Widget\RecentPosts"
+            is_email_compatible="false"
+            placeholder_image="Magento_Cms::images/widget_block.png">
+        <label translate="true">Blog Recent Posts</label>
+        <description translate="true">Displays the most recent blog posts in a responsive grid.</description>
+        <parameters>
+            <parameter name="title" xsi:type="text" visible="true" sort_order="10">
+                <label translate="true">Heading</label>
+                <value>Latest from the blog</value>
+            </parameter>
+            <parameter name="count" xsi:type="text" visible="true" sort_order="20">
+                <label translate="true">Number of posts</label>
+                <value>3</value>
+            </parameter>
+        </parameters>
+    </widget>
+</widgets>

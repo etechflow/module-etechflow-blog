@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Etechflow_Blog module declaration.
+ * Sequence ensures core dependencies load first so our DI, layout and
+ * url-rewrite logic can safely extend them.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Etechflow_Blog">
+        <sequence>
+            <module name="Magento_Store"/>
+            <module name="Magento_Cms"/>
+            <module name="Magento_Catalog"/>
+            <module name="Magento_Customer"/>
+            <module name="Magento_Theme"/>
+            <module name="Magento_Widget"/>
+            <module name="Magento_UrlRewrite"/>
+        </sequence>
+    </module>
+</config>

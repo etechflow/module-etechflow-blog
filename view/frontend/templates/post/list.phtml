@@ -1,0 +1,108 @@
+<?php
+/**
+ * Blog listing (home/category/tag/author/archive/search).
+ * Theme-agnostic: semantic HTML + scoped .etf- classes. No framework JS needed.
+ *
+ * @var \Etechflow\Blog\Block\PostList $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+/** @var \Etechflow\Blog\ViewModel\Config $vm */
+$vm    = $block->getData('view_model');
+$url   = $block->getUrlModel();
+$ctx   = $block->getPageContext();
+$items = array_values($block->getPostCollection()->getItems());
+
+$isHome   = $ctx->getPageType() === \Etechflow\Blog\Model\PageContext::TYPE_INDEX;
+$featured = ($vm->showFeatured() && $isHome && $block->getCurrentPage() === 1 && $items) ? $items[0] : null;
+$grid     = $featured ? array_slice($items, 1) : $items;
+$cols     = $vm->gridColumns();
+$lazyAttr = $vm->lazyImages() ? ' loading="lazy"' : '';
+$curPage  = $block->getCurrentPage();
+$lastPage = $block->getLastPage();
+?>
+<div class="etf-blog">
+  <div class="etf-container">
+
+    <header class="etf-hero">
+      <nav class="etf-breadcrumb" aria-label="<?= $escaper->escapeHtmlAttr(__('Breadcrumb')) ?>">
+        <a href="<?= $escaper->escapeUrl($block->getBaseUrl()) ?>"><?= $escaper->escapeHtml(__('Home')) ?></a>
+        <span aria-hidden="true">›</span>
+        <a href="<?= $escaper->escapeUrl($url->getBaseUrl()) ?>"><?= $escaper->escapeHtml($vm->blogTitle()) ?></a>
+        <?php if (!$isHome): ?>
+          <span aria-hidden="true">›</span>
+          <span class="etf-current"><?= $escaper->escapeHtml($block->getListTitle()) ?></span>
+        <?php endif; ?>
+      </nav>
+      <h1 class="etf-hero-title"><?= $escaper->escapeHtml($block->getListTitle()) ?></h1>
+    </header>
+
+    <div class="etf-layout">
+      <aside class="etf-sidebar"><?= /* @noEscape */ $block->getChildHtml('sidebar') ?></aside>
+
+      <main class="etf-main">
+        <?php if (!$items): ?>
+          <div class="etf-empty"><?= $escaper->escapeHtml(__('No posts found.')) ?></div>
+        <?php else: ?>
+
+          <?php if ($featured):
+              $fImg = $vm->imageUrl($block->getThumbnail($featured)); ?>
+            <a class="etf-featured" href="<?= $escaper->escapeUrl($block->getPostUrl($featured)) ?>">
+              <div class="etf-featured-img">
+                <?php if ($fImg): ?>
+                  <img src="<?= $escaper->escapeUrl($fImg) ?>" alt="<?= $escaper->escapeHtmlAttr($featured->getTitle()) ?>"<?= /* @noEscape */ $lazyAttr ?>>
+                <?php endif; ?>
+                <span class="etf-badge"><?= $escaper->escapeHtml(__('Featured')) ?></span>
+              </div>
+              <div class="etf-featured-body">
+                <div class="etf-meta"><span class="etf-date"><?= $escaper->escapeHtml($block->getPostDate($featured)) ?></span></div>
+                <h2 class="etf-featured-title"><?= $escaper->escapeHtml($featured->getTitle()) ?></h2>
+                <p class="etf-excerpt"><?= $escaper->escapeHtml($block->getExcerpt($featured, 220)) ?></p>
+                <span class="etf-readmore"><?= $escaper->escapeHtml(__('Read more')) ?> →</span>
+              </div>
+            </a>
+          <?php endif; ?>
+
+          <div class="etf-grid" style="--etf-cols:<?= (int)$cols ?>">
+            <?php foreach ($grid as $post):
+                $img = $vm->imageUrl($block->getThumbnail($post)); ?>
+              <a class="etf-card" href="<?= $escaper->escapeUrl($block->getPostUrl($post)) ?>">
+                <div class="etf-card-img">
+                  <?php if ($img): ?>
+                    <img src="<?= $escaper->escapeUrl($img) ?>" alt="<?= $escaper->escapeHtmlAttr($post->getTitle()) ?>"<?= /* @noEscape */ $lazyAttr ?>>
+                  <?php else: ?>
+                    <span class="etf-card-img-ph" aria-hidden="true"></span>
+                  <?php endif; ?>
+                </div>
+                <div class="etf-card-body">
+                  <div class="etf-meta"><span class="etf-date"><?= $escaper->escapeHtml($block->getPostDate($post)) ?></span></div>
+                  <h3 class="etf-card-title"><?= $escaper->escapeHtml($post->getTitle()) ?></h3>
+                  <p class="etf-excerpt"><?= $escaper->escapeHtml($block->getExcerpt($post, 120)) ?></p>
+                  <span class="etf-readmore"><?= $escaper->escapeHtml(__('Read more')) ?> →</span>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+
+          <?php if ($lastPage > 1): ?>
+            <nav class="etf-pager" aria-label="<?= $escaper->escapeHtmlAttr(__('Pagination')) ?>">
+              <?php if ($curPage > 1): ?>
+                <a class="etf-page etf-prev" rel="prev" href="<?= $escaper->escapeUrl($block->getPageUrl($curPage - 1)) ?>">‹</a>
+              <?php endif; ?>
+              <?php for ($i = 1; $i <= $lastPage; $i++): ?>
+                <?php if ($i === $curPage): ?>
+                  <span class="etf-page etf-current-page"><?= (int)$i ?></span>
+                <?php else: ?>
+                  <a class="etf-page" href="<?= $escaper->escapeUrl($block->getPageUrl($i)) ?>"><?= (int)$i ?></a>
+                <?php endif; ?>
+              <?php endfor; ?>
+              <?php if ($curPage < $lastPage): ?>
+                <a class="etf-page etf-next" rel="next" href="<?= $escaper->escapeUrl($block->getPageUrl($curPage + 1)) ?>">›</a>
+              <?php endif; ?>
+            </nav>
+          <?php endif; ?>
+
+        <?php endif; ?>
+      </main>
+    </div>
+  </div>
+</div>

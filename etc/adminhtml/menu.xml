@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Admin sidebar menu. Adds a top-level "Etechflow Blog" tab with sub-items
+ * for every entity plus a quick link to Configuration.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Backend/etc/menu.xsd">
+    <menu>
+        <add id="Etechflow_Blog::blog" title="Etechflow Blog" translate="title" module="Etechflow_Blog"
+             sortOrder="51" resource="Etechflow_Blog::blog"/>
+        <add id="Etechflow_Blog::post" title="Posts" translate="title" module="Etechflow_Blog"
+             sortOrder="10" parent="Etechflow_Blog::blog" action="etechflow_blog/post/index" resource="Etechflow_Blog::post"/>
+        <add id="Etechflow_Blog::category" title="Categories" translate="title" module="Etechflow_Blog"
+             sortOrder="20" parent="Etechflow_Blog::blog" action="etechflow_blog/category/index" resource="Etechflow_Blog::category"/>
+        <add id="Etechflow_Blog::tag" title="Tags" translate="title" module="Etechflow_Blog"
+             sortOrder="30" parent="Etechflow_Blog::blog" action="etechflow_blog/tag/index" resource="Etechflow_Blog::tag"/>
+        <add id="Etechflow_Blog::author" title="Authors" translate="title" module="Etechflow_Blog"
+             sortOrder="40" parent="Etechflow_Blog::blog" action="etechflow_blog/author/index" resource="Etechflow_Blog::author"/>
+        <add id="Etechflow_Blog::comment" title="Comments" translate="title" module="Etechflow_Blog"
+             sortOrder="50" parent="Etechflow_Blog::blog" action="etechflow_blog/comment/index" resource="Etechflow_Blog::comment"/>
+        <add id="Etechflow_Blog::settings" title="Configuration" translate="title" module="Etechflow_Blog"
+             sortOrder="100" parent="Etechflow_Blog::blog"
+             action="adminhtml/system_config/edit/section/etechflow_blog" resource="Etechflow_Blog::config"/>
+    </menu>
+</config>

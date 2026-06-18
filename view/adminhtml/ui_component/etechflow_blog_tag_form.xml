@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!-- Tag form. Every field has a how-to hint. -->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">etechflow_blog_tag_form.etechflow_blog_tag_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Tag Information</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="back" class="Etechflow\Blog\Block\Adminhtml\Button\BackButton"/>
+            <button name="delete" class="Etechflow\Blog\Block\Adminhtml\Button\DeleteButton"/>
+            <button name="save" class="Etechflow\Blog\Block\Adminhtml\Button\SaveButton"/>
+            <button name="save_and_continue" class="Etechflow\Blog\Block\Adminhtml\Button\SaveAndContinueButton"/>
+        </buttons>
+        <namespace>etechflow_blog_tag_form</namespace>
+        <dataScope>data</dataScope>
+        <deps><dep>etechflow_blog_tag_form.etechflow_blog_tag_form_data_source</dep></deps>
+    </settings>
+    <dataSource name="etechflow_blog_tag_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array"><item name="component" xsi:type="string">Magento_Ui/js/form/provider</item></item>
+        </argument>
+        <settings><submitUrl path="etechflow_blog/tag/save"/></settings>
+        <dataProvider class="Etechflow\Blog\Model\Tag\DataProvider" name="etechflow_blog_tag_form_data_source">
+            <settings><requestFieldName>tag_id</requestFieldName><primaryFieldName>tag_id</primaryFieldName></settings>
+        </dataProvider>
+    </dataSource>
+
+    <fieldset name="general" sortOrder="10">
+        <settings><label translate="true">General</label></settings>
+        <field name="is_active" formElement="checkbox" sortOrder="10">
+            <settings>
+                <dataType>boolean</dataType><label translate="true">Enabled</label>
+                <notice translate="true">Turn off to hide this tag and its /blog/tag page.</notice>
+            </settings>
+            <formElements><checkbox><settings><valueMap><map name="false" xsi:type="number">0</map><map name="true" xsi:type="number">1</map></valueMap><prefer>toggle</prefer></settings></checkbox></formElements>
+        </field>
+        <field name="title" formElement="input" sortOrder="20">
+            <settings>
+                <dataType>text</dataType><label translate="true">Title</label>
+                <validation><rule name="required-entry" xsi:type="boolean">true</rule></validation>
+                <notice translate="true">The tag word/phrase shown in the tag cloud and on posts.</notice>
+            </settings>
+        </field>
+        <field name="identifier" formElement="input" sortOrder="30">
+            <settings>
+                <dataType>text</dataType><label translate="true">URL Key</label>
+                <notice translate="true">Slug for /blog/tag/{key}. Leave blank to auto-generate from the title.</notice>
+            </settings>
+        </field>
+        <field name="content" formElement="textarea" sortOrder="40">
+            <settings>
+                <dataType>text</dataType><label translate="true">Description</label>
+                <notice translate="true">Optional intro text shown at the top of the tag page.</notice>
+            </settings>
+        </field>
+    </fieldset>
+
+    <fieldset name="seo" sortOrder="20">
+        <settings><label translate="true">SEO</label><collapsible>true</collapsible><opened>false</opened></settings>
+        <field name="meta_title" formElement="input" sortOrder="10">
+            <settings><dataType>text</dataType><label translate="true">Meta Title</label><notice translate="true">Browser/Google title. Defaults to the tag title.</notice></settings>
+        </field>
+        <field name="meta_description" formElement="textarea" sortOrder="20">
+            <settings><dataType>text</dataType><label translate="true">Meta Description</label><notice translate="true">Search snippet, ~150–160 characters.</notice></settings>
+        </field>
+    </fieldset>
+
+    <fieldset name="stores" sortOrder="30">
+        <settings><label translate="true">Store Views</label><collapsible>true</collapsible><opened>false</opened></settings>
+        <field name="store_id" formElement="multiselect" sortOrder="10">
+            <settings>
+                <dataType>text</dataType><label translate="true">Store Views</label>
+                <notice translate="true">Where this tag is visible. Pick "All Store Views" for everywhere.</notice>
+            </settings>
+            <formElements><multiselect><settings><options class="Magento\Cms\Ui\Component\Listing\Column\Cms\Options"/></settings></multiselect></formElements>
+        </field>
+    </fieldset>
+</form>

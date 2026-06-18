@@ -1,0 +1,27 @@
+<?php
+/**
+ * Recent posts widget output.
+ *
+ * @var \Etechflow\Blog\Block\Widget\RecentPosts $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$posts = $block->getPosts();
+if (!$posts) { return; }
+$url = $block->getUrlModel();
+?>
+<section class="etf-blog etf-widget-recent">
+  <div class="etf-container" style="padding:1.25rem 0">
+    <h2 class="etf-section-title"><?= $escaper->escapeHtml($block->getHeading()) ?></h2>
+    <div class="etf-grid" style="--etf-cols:3">
+      <?php foreach ($posts as $post):
+          $img = $block->getThumbnail($post); ?>
+        <a class="etf-card" href="<?= $escaper->escapeUrl($url->getPostUrl($post)) ?>">
+          <div class="etf-card-img">
+            <?php if ($img): ?><img src="<?= $escaper->escapeUrl($img) ?>" alt="<?= $escaper->escapeHtmlAttr($post->getTitle()) ?>" loading="lazy"><?php endif; ?>
+          </div>
+          <div class="etf-card-body"><h3 class="etf-card-title"><?= $escaper->escapeHtml($post->getTitle()) ?></h3></div>
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>

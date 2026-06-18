@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">etechflow_blog_comment_listing.etechflow_blog_comment_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>etechflow_blog_comment_columns</spinner>
+        <deps><dep>etechflow_blog_comment_listing.etechflow_blog_comment_listing_data_source</dep></deps>
+    </settings>
+    <dataSource name="etechflow_blog_comment_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig><param name="indexField" xsi:type="string">comment_id</param></storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Etechflow_Blog::comment</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider"
+                      name="etechflow_blog_comment_listing_data_source">
+            <settings><requestFieldName>comment_id</requestFieldName><primaryFieldName>comment_id</primaryFieldName></settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filters name="listing_filters"/>
+        <massaction name="listing_massaction">
+            <action name="approve">
+                <settings>
+                    <url path="etechflow_blog/comment/massApprove"/><type>approve</type><label translate="true">Approve</label>
+                </settings>
+            </action>
+            <action name="notapprove">
+                <settings>
+                    <url path="etechflow_blog/comment/massNotApprove"/><type>notapprove</type><label translate="true">Mark Not Approved</label>
+                </settings>
+            </action>
+            <action name="delete">
+                <settings>
+                    <confirm><message translate="true">Delete the selected comments?</message><title translate="true">Delete comments</title></confirm>
+                    <url path="etechflow_blog/comment/massDelete"/><type>delete</type><label translate="true">Delete</label>
+                </settings>
+            </action>
+        </massaction>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="etechflow_blog_comment_columns">
+        <selectionsColumn name="ids"><settings><indexField>comment_id</indexField></settings></selectionsColumn>
+        <column name="comment_id"><settings><filter>textRange</filter><label translate="true">ID</label><sorting>desc</sorting></settings></column>
+        <column name="author_nickname"><settings><filter>text</filter><label translate="true">Author</label></settings></column>
+        <column name="author_email"><settings><filter>text</filter><label translate="true">Email</label></settings></column>
+        <column name="text"><settings><filter>text</filter><label translate="true">Comment</label></settings></column>
+        <column name="post_id"><settings><filter>textRange</filter><label translate="true">Post ID</label></settings></column>
+        <column name="status" component="Magento_Ui/js/grid/columns/select">
+            <settings><options class="Etechflow\Blog\Model\Source\CommentStatus"/><filter>select</filter><dataType>select</dataType><label translate="true">Status</label></settings>
+        </column>
+        <column name="creation_time" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings><filter>dateRange</filter><dataType>date</dataType><label translate="true">Date</label></settings>
+        </column>
+        <actionsColumn name="actions" class="Etechflow\Blog\Ui\Component\Listing\Column\Actions">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="indexField" xsi:type="string">comment_id</item>
+                    <item name="editUrlPath" xsi:type="string">etechflow_blog/comment/edit</item>
+                    <item name="deleteUrlPath" xsi:type="string">etechflow_blog/comment/delete</item>
+                </item>
+            </argument>
+            <settings><indexField>comment_id</indexField></settings>
+        </actionsColumn>
+    </columns>
+</listing>

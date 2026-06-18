@@ -1,0 +1,26 @@
+<?php
+/**
+ * SEO head output for blog pages.
+ *
+ * @var \Etechflow\Blog\Block\Html\Head $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$canonical = $block->getCanonicalUrl();
+?>
+<?php if ($block->flag('seo/use_canonical') && $canonical): ?>
+<link rel="canonical" href="<?= $escaper->escapeUrl($canonical) ?>"/>
+<?php endif; ?>
+<?php if ($block->flag('seo/opengraph')): ?>
+    <?php foreach ($block->getOpenGraph() as $property => $content): ?>
+<meta property="<?= $escaper->escapeHtmlAttr($property) ?>" content="<?= $escaper->escapeHtmlAttr($content) ?>"/>
+    <?php endforeach; ?>
+<?php endif; ?>
+<?php if ($block->flag('seo/twitter_cards')): $og = $block->getOpenGraph(); ?>
+<meta name="twitter:card" content="summary_large_image"/>
+<?php if (!empty($og['og:title'])): ?><meta name="twitter:title" content="<?= $escaper->escapeHtmlAttr($og['og:title']) ?>"/><?php endif; ?>
+<?php if (!empty($og['og:description'])): ?><meta name="twitter:description" content="<?= $escaper->escapeHtmlAttr($og['og:description']) ?>"/><?php endif; ?>
+<?php if (!empty($og['og:image'])): ?><meta name="twitter:image" content="<?= $escaper->escapeHtmlAttr($og['og:image']) ?>"/><?php endif; ?>
+<?php endif; ?>
+<?php if ($block->flag('seo/json_ld') && ($jsonLd = $block->getJsonLd())): ?>
+<script type="application/ld+json"><?= /* @noEscape */ $jsonLd ?></script>
+<?php endif; ?>
