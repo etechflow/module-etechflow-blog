@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Etechflow\Blog\Block\Product;
 
+use Etechflow\Blog\Model\LicenseValidator;
 use Etechflow\Blog\Model\ResourceModel\Post\CollectionFactory;
 use Etechflow\Blog\Model\Url;
 use Magento\Framework\App\ResourceConnection;
@@ -25,6 +26,8 @@ class RelatedPosts extends Template
     private $resource;
     /** @var Url */
     private $url;
+    /** @var LicenseValidator */
+    private $licenseValidator;
 
     public function __construct(
         Context $context,
@@ -32,12 +35,14 @@ class RelatedPosts extends Template
         CollectionFactory $collectionFactory,
         ResourceConnection $resource,
         Url $url,
+        LicenseValidator $licenseValidator,
         array $data = []
     ) {
         $this->registry = $registry;
         $this->collectionFactory = $collectionFactory;
         $this->resource = $resource;
         $this->url = $url;
+        $this->licenseValidator = $licenseValidator;
         parent::__construct($context, $data);
     }
 
@@ -49,6 +54,9 @@ class RelatedPosts extends Template
     /** @return array */
     public function getPosts(): array
     {
+        if (!$this->licenseValidator->isValid()) {
+            return [];
+        }
         if (!$this->_scopeConfig->isSetFlag('etechflow_blog/product_page/related_posts', ScopeInterface::SCOPE_STORE)) {
             return [];
         }

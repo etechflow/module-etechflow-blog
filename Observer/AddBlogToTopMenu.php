@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace Etechflow\Blog\Observer;
 
+use Etechflow\Blog\Model\LicenseValidator;
 use Etechflow\Blog\Model\Url;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Tree\NodeFactory;
@@ -21,21 +22,26 @@ class AddBlogToTopMenu implements ObserverInterface
     private $url;
     /** @var NodeFactory */
     private $nodeFactory;
+    /** @var LicenseValidator */
+    private $licenseValidator;
 
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         Url $url,
-        NodeFactory $nodeFactory
+        NodeFactory $nodeFactory,
+        LicenseValidator $licenseValidator
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->url = $url;
         $this->nodeFactory = $nodeFactory;
+        $this->licenseValidator = $licenseValidator;
     }
 
     public function execute(Observer $observer)
     {
         if (!$this->scopeConfig->isSetFlag('etechflow_blog/general/enabled', ScopeInterface::SCOPE_STORE)
             || !$this->scopeConfig->isSetFlag('etechflow_blog/general/show_in_top_menu', ScopeInterface::SCOPE_STORE)
+            || !$this->licenseValidator->isValid()
         ) {
             return;
         }

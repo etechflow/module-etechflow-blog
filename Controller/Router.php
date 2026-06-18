@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Etechflow\Blog\Controller;
 
+use Etechflow\Blog\Model\LicenseValidator;
 use Magento\Framework\App\Action\Forward;
 use Magento\Framework\App\ActionFactory;
 use Magento\Framework\App\ActionInterface;
@@ -26,13 +27,17 @@ class Router implements RouterInterface
     private $actionFactory;
     /** @var ScopeConfigInterface */
     private $scopeConfig;
+    /** @var LicenseValidator */
+    private $licenseValidator;
 
     public function __construct(
         ActionFactory $actionFactory,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        LicenseValidator $licenseValidator
     ) {
         $this->actionFactory = $actionFactory;
         $this->scopeConfig = $scopeConfig;
+        $this->licenseValidator = $licenseValidator;
     }
 
     /**
@@ -42,6 +47,11 @@ class Router implements RouterInterface
     public function match(RequestInterface $request)
     {
         if (!$this->scopeConfig->isSetFlag('etechflow_blog/general/enabled', ScopeInterface::SCOPE_STORE)) {
+            return null;
+        }
+
+        // License gate: an unlicensed install serves no blog pages (silent 404).
+        if (!$this->licenseValidator->isValid()) {
             return null;
         }
 

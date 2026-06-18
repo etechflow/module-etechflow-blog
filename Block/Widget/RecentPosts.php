@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace Etechflow\Blog\Block\Widget;
 
+use Etechflow\Blog\Model\LicenseValidator;
 use Etechflow\Blog\Model\ResourceModel\Post\CollectionFactory;
 use Etechflow\Blog\Model\Url;
 use Magento\Framework\View\Element\Template;
@@ -23,17 +24,21 @@ class RecentPosts extends Template implements BlockInterface
     private $url;
     /** @var StoreManagerInterface */
     private $storeManager;
+    /** @var LicenseValidator */
+    private $licenseValidator;
 
     public function __construct(
         Context $context,
         CollectionFactory $collectionFactory,
         Url $url,
         StoreManagerInterface $storeManager,
+        LicenseValidator $licenseValidator,
         array $data = []
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->url = $url;
         $this->storeManager = $storeManager;
+        $this->licenseValidator = $licenseValidator;
         parent::__construct($context, $data);
     }
 
@@ -44,6 +49,9 @@ class RecentPosts extends Template implements BlockInterface
 
     public function getPosts(): array
     {
+        if (!$this->licenseValidator->isValid()) {
+            return [];
+        }
         $count = (int)$this->getData('count') ?: 3;
         $collection = $this->collectionFactory->create();
         $collection->addActiveFilter()
