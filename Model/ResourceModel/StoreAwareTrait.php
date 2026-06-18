@@ -15,11 +15,15 @@ trait StoreAwareTrait
      */
     protected function syncStores(string $table, string $idColumn, int $id, $stores): void
     {
-        if ($stores === null) {
-            return; // field not submitted — leave existing rows untouched
-        }
         if (!is_array($stores)) {
-            $stores = $stores === '' ? [] : explode(',', (string)$stores);
+            if ($stores === null || $stores === '') {
+                $stores = [0]; // no store field in form — default to all stores
+            } else {
+                $stores = explode(',', (string)$stores);
+            }
+        }
+        if (empty($stores)) {
+            $stores = [0]; // empty submission defaults to all stores
         }
         $connection = $this->getConnection();
         $tableName = $this->getTable($table);

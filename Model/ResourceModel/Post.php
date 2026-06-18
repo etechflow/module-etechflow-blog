@@ -54,7 +54,8 @@ class Post extends AbstractDb
     protected function _afterSave(AbstractModel $object)
     {
         $postId = (int)$object->getId();
-        $this->syncLink('etechflow_blog_post_store', 'store_id', $postId, $this->normalize($object->getData('store_id')));
+        $stores = $this->normalize($object->getData('store_id')) ?? [0];
+        $this->syncLink('etechflow_blog_post_store', 'store_id', $postId, $stores, false);
         $this->syncLink('etechflow_blog_post_category', 'category_id', $postId, $this->normalize($object->getData('categories')));
         $this->syncLink('etechflow_blog_post_tag', 'tag_id', $postId, $this->normalize($object->getData('tags')));
         $this->syncLink('etechflow_blog_post_relatedproduct', 'related_id', $postId, $this->normalize($object->getData('related_products')));
@@ -69,7 +70,7 @@ class Post extends AbstractDb
     {
         $postId = (int)$object->getId();
         if ($postId) {
-            $object->setData('store_id', $this->readLink('etechflow_blog_post_store', 'store_id', $postId));
+            $object->setData('store_id', $this->readLink('etechflow_blog_post_store', 'store_id', $postId, false));
             $object->setData('categories', $this->readLink('etechflow_blog_post_category', 'category_id', $postId));
             $object->setData('tags', $this->readLink('etechflow_blog_post_tag', 'tag_id', $postId));
             $object->setData('related_products', $this->readLink('etechflow_blog_post_relatedproduct', 'related_id', $postId));
@@ -93,7 +94,7 @@ class Post extends AbstractDb
     /**
      * Replace the link rows for a post in a link table.
      */
-    private function syncLink(string $table, string $column, int $postId, ?array $ids): void
+    private function syncLink(string $table, string $column, int $postId, ?array $ids, bool $usePosition = true): void
     {
         if ($ids === null) {
             return; // field not submitted — leave existing relations untouched
@@ -107,24 +108,26 @@ class Post extends AbstractDb
             if ($id <= 0 && $table !== 'etechflow_blog_post_store') {
                 continue;
             }
-            $connection->insert($tableName, [
-                'post_id' => $postId,
-                $column => $id,
-                'position' => $position++,
-            ]);
+            $row = ['post_id' => $postId, $column => $id];
+            if ($usePosition) {
+                $row['position'] = $position++;
+            }
+            $connection->insert($tableName, $row);
         }
     }
 
     /**
      * @return int[]
      */
-    private function readLink(string $table, string $column, int $postId): array
+    private function readLink(string $table, string $column, int $postId, bool $usePosition = true): array
     {
         $connection = $this->getConnection();
         $select = $connection->select()
             ->from($this->getTable($table), $column)
-            ->where('post_id = ?', $postId)
-            ->order('position ' . \Magento\Framework\DB\Select::SQL_ASC);
+            ->where('post_id = ?', $postId);
+        if ($usePosition) {
+            $select->order('position ' . \Magento\Framework\DB\Select::SQL_ASC);
+        }
         return array_map('intval', $connection->fetchCol($select));
     }
 
