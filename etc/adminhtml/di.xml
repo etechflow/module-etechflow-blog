@@ -1,59 +1,15 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Admin grid data sources. Each entity reuses the framework's generic grid
- * SearchResult (no custom grid-collection classes needed) and is mapped to its
- * listing data source name.
+ * Intentionally empty. Admin grid data sources (virtualTypes +
+ * CollectionFactory "collections") were moved to the global etc/di.xml.
+ *
+ * Registering grid "collections" in area scope (adminhtml/di.xml) REPLACES the
+ * merged global registry instead of extending it, which silently breaks every
+ * other module's admin grid with "Not registered handle ...". Keep grid data
+ * sources in global etc/di.xml so all modules' entries merge additively.
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-
-    <virtualType name="Etechflow\Blog\Model\ResourceModel\Post\Grid\Collection"
-                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">etechflow_blog_post</argument>
-            <argument name="resourceModel" xsi:type="string">Etechflow\Blog\Model\ResourceModel\Post</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Etechflow\Blog\Model\ResourceModel\Category\Grid\Collection"
-                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">etechflow_blog_category</argument>
-            <argument name="resourceModel" xsi:type="string">Etechflow\Blog\Model\ResourceModel\Category</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Etechflow\Blog\Model\ResourceModel\Tag\Grid\Collection"
-                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">etechflow_blog_tag</argument>
-            <argument name="resourceModel" xsi:type="string">Etechflow\Blog\Model\ResourceModel\Tag</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Etechflow\Blog\Model\ResourceModel\Author\Grid\Collection"
-                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">etechflow_blog_author</argument>
-            <argument name="resourceModel" xsi:type="string">Etechflow\Blog\Model\ResourceModel\Author</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Etechflow\Blog\Model\ResourceModel\Comment\Grid\Collection"
-                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">etechflow_blog_comment</argument>
-            <argument name="resourceModel" xsi:type="string">Etechflow\Blog\Model\ResourceModel\Comment</argument>
-        </arguments>
-    </virtualType>
-
-    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
-        <arguments>
-            <argument name="collections" xsi:type="array">
-                <item name="etechflow_blog_post_listing_data_source" xsi:type="string">Etechflow\Blog\Model\ResourceModel\Post\Grid\Collection</item>
-                <item name="etechflow_blog_category_listing_data_source" xsi:type="string">Etechflow\Blog\Model\ResourceModel\Category\Grid\Collection</item>
-                <item name="etechflow_blog_tag_listing_data_source" xsi:type="string">Etechflow\Blog\Model\ResourceModel\Tag\Grid\Collection</item>
-                <item name="etechflow_blog_author_listing_data_source" xsi:type="string">Etechflow\Blog\Model\ResourceModel\Author\Grid\Collection</item>
-                <item name="etechflow_blog_comment_listing_data_source" xsi:type="string">Etechflow\Blog\Model\ResourceModel\Comment\Grid\Collection</item>
-            </argument>
-        </arguments>
-    </type>
 </config>
