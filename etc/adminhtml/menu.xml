@@ -10,6 +10,8 @@
     <menu>
         <add id="Etechflow_Blog::blog" title="Etechflow Blog" translate="title" module="Etechflow_Blog"
              sortOrder="51" resource="Etechflow_Blog::blog"/>
+        <add id="Etechflow_Blog::license" title="License" translate="title" module="Etechflow_Blog"
+             sortOrder="5" parent="Etechflow_Blog::blog" action="etechflow_blog/license/gate" resource="Etechflow_Blog::config"/>
         <add id="Etechflow_Blog::post" title="Posts" translate="title" module="Etechflow_Blog"
              sortOrder="10" parent="Etechflow_Blog::blog" action="etechflow_blog/post/index" resource="Etechflow_Blog::post"/>
         <add id="Etechflow_Blog::category" title="Categories" translate="title" module="Etechflow_Blog"
