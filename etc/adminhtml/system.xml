@@ -343,50 +343,6 @@
                 </field>
             </group>
 
-            <!-- ============ MEDIA / BANNERS / CLOUDINARY ============ -->
-            <group id="banners" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Responsive Banners</label>
-                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enable Per-Post Banner Images</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Adds desktop/tablet/mobile banner upload fields to each post so the hero looks sharp on every device.</comment>
-                </field>
-            </group>
-
-            <group id="cloudinary" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Cloudinary (optional)</label>
-                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Serve Images Through Cloudinary</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>If you use the Cloudinary integration, blog images are delivered optimized/responsive via Cloudinary.</comment>
-                </field>
-                <field id="quality" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Image Quality</label>
-                    <depends><field id="enabled">1</field></depends>
-                    <comment>Cloudinary quality setting, e.g. "auto" (recommended) or a number 1–100.</comment>
-                </field>
-            </group>
-
-            <!-- ============ PERFORMANCE ============ -->
-            <group id="performance" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Performance</label>
-                <field id="lazy_load_images" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Lazy-Load Images</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Below-the-fold images load only as the reader scrolls, speeding up first paint. Keep on.</comment>
-                </field>
-                <field id="defer_js" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Defer Blog JavaScript</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Loads the small blog JS without blocking rendering. Keep on unless debugging.</comment>
-                </field>
-                <field id="minify_inline_css" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Minify Inline CSS</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Strips whitespace from the blog's scoped inline CSS to shave a few KB off each page.</comment>
-                </field>
-            </group>
-
         </section>
     </system>
 </config>

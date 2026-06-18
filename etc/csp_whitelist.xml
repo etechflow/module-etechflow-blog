@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Content-Security-Policy allowances for common blog content: Cloudinary images
- * and YouTube/Vimeo embeds inside post bodies. Share buttons are plain links so
- * need no CSP entries.
+ * Content-Security-Policy allowances for common blog content: YouTube/Vimeo
+ * embeds inside post bodies. Share buttons are plain links so need no CSP
+ * entries.
  */
 -->
 <csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -11,7 +11,6 @@
     <policies>
         <policy id="img-src">
             <values>
-                <value id="cloudinary" type="host">res.cloudinary.com</value>
                 <value id="ytimg" type="host">i.ytimg.com</value>
             </values>
         </policy>
@@ -20,11 +19,6 @@
                 <value id="youtube" type="host">https://www.youtube.com</value>
                 <value id="youtube-nocookie" type="host">https://www.youtube-nocookie.com</value>
                 <value id="vimeo" type="host">https://player.vimeo.com</value>
-            </values>
-        </policy>
-        <policy id="media-src">
-            <values>
-                <value id="cloudinary-media" type="host">res.cloudinary.com</value>
             </values>
         </policy>
     </policies>

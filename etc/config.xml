@@ -87,18 +87,11 @@
                 <related_posts>1</related_posts>
                 <related_posts_count>3</related_posts_count>
             </product_page>
-            <banners>
-                <enabled>1</enabled>
-            </banners>
-            <cloudinary>
-                <enabled>0</enabled>
-                <quality>auto</quality>
-            </cloudinary>
-            <performance>
-                <lazy_load_images>1</lazy_load_images>
-                <defer_js>1</defer_js>
-                <minify_inline_css>1</minify_inline_css>
-            </performance>
+            <!--
+                Performance (lazy-load) and Responsive Banners are now always on
+                (no admin toggle). Cloudinary was removed entirely. See
+                ViewModel\Config::lazyImages() which is hardcoded to true.
+            -->
         </etechflow_blog>
     </default>
 </config>

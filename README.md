@@ -27,7 +27,7 @@ data and logic, no third‑party blog engine required.
 **Storefront pages:** Blog home · Post · Category · Tag · Author · Archive (by date) · Search · RSS feed
 **Post features:** related posts · related products · author box · reading time · reading progress bar ·
 views counter · table of contents · social share · image gallery + lightbox · next/prev · breadcrumbs ·
-nested comments (with optional reCAPTCHA) · responsive per‑post banners (desktop/tablet/mobile) · Cloudinary quality option
+nested comments (with optional reCAPTCHA) · responsive per‑post banners (desktop/tablet/mobile)
 **Sidebar / widgets:** search · categories · recent · popular · featured · archive · tag cloud · RSS ·
 related products · "recent posts" CMS widget · "related posts" block on product pages · blog link in top menu
 **Admin:** full CRUD grids + forms for every entity, comment moderation, ACL, and a System Configuration

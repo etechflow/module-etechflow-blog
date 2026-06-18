@@ -93,9 +93,13 @@ class Config implements ArgumentInterface
         return $this->isFlag('design/featured_post');
     }
 
+    /**
+     * Lazy-loading of below-the-fold images is always on (the Performance
+     * config group was removed; the feature is no longer toggleable).
+     */
     public function lazyImages(): bool
     {
-        return $this->isFlag('performance/lazy_load_images');
+        return true;
     }
 
     public function socialNetworks(): array
