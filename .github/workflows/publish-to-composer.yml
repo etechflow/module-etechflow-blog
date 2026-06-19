@@ -1,0 +1,49 @@
+name: Publish to eTechFlow Composer repo
+
+# When a GitHub Release is published, bake the module into a versioned dist zip
+# and push it to the private eTechFlow Composer repository served by the
+# licensing portal (/composer/publish). The release tag becomes the package
+# version and the release body becomes the changelog shown in the admin update
+# notice. Requires repo/org secret PORTAL_PUBLISH_TOKEN.
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Build versioned dist zip
+        id: build
+        run: |
+          set -euo pipefail
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          tmp="$(mktemp)"
+          jq --arg v "$VERSION" '.version = $v' composer.json > "$tmp" && mv "$tmp" composer.json
+          zip -r -q /tmp/module.zip . -x '.git/*' '.github/*'
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "sha=$(sha1sum /tmp/module.zip | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to private Composer repo
+        env:
+          PORTAL_PUBLISH_TOKEN: ${{ secrets.PORTAL_PUBLISH_TOKEN }}
+          RELEASE_BODY: ${{ github.event.release.body }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$RELEASE_BODY" > /tmp/changelog.txt
+          curl -fsS -X POST "https://license-service.etechflow.com/composer/publish" \
+            -H "Authorization: Bearer $PORTAL_PUBLISH_TOKEN" \
+            -F "composer_json=<composer.json" \
+            -F "version=${{ steps.build.outputs.version }}" \
+            -F "reference=${{ github.sha }}" \
+            -F "shasum=${{ steps.build.outputs.sha }}" \
+            -F "changelog=</tmp/changelog.txt" \
+            -F "package=@/tmp/module.zip"
+          echo "Published ${{ steps.build.outputs.version }} to the eTechFlow Composer repo."
