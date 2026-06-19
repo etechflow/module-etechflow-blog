@@ -5,6 +5,10 @@
     <update handle="styles"/>
     <body>
         <referenceContainer name="content">
+            <block class="Magento\Backend\Block\Template"
+                   name="etechflow.blog.update.notice"
+                   template="Etechflow_Blog::update-notice.phtml"
+                   cacheable="false"/>
             <uiComponent name="etechflow_blog_post_listing"/>
         </referenceContainer>
     </body>
