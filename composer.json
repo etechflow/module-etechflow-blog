@@ -1,9 +1,9 @@
 {
     "name": "etechflow/module-blog",
-    "description": "Etechflow Blog — a fast, SEO-friendly, fully responsive, theme-agnostic blog for Magento 2 / Adobe Commerce. Compatible with Hyvä, Luma and Adobe Commerce themes.",
+    "description": "Etechflow Blog \u00e2\u20ac\u201d a fast, SEO-friendly, fully responsive, theme-agnostic blog for Magento 2 / Adobe Commerce. Compatible with Hyv\u00c3\u00a4, Luma and Adobe Commerce themes.",
     "type": "magento2-module",
     "license": "proprietary",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "authors": [
         {
             "name": "Etechflow",
@@ -16,7 +16,7 @@
     },
     "suggest": {
         "magento/module-csp": "Adds Content-Security-Policy whitelisting support used by the blog assets.",
-        "hyva-themes/magento2-default-theme": "For Hyvä storefronts (the blog is Hyvä-ready out of the box, no bridge needed)."
+        "hyva-themes/magento2-default-theme": "For Hyv\u00c3\u00a4 storefronts (the blog is Hyv\u00c3\u00a4-ready out of the box, no bridge needed)."
     },
     "autoload": {
         "files": [

@@ -5,4 +5,8 @@
     <event name="page_block_html_topmenu_gethtml_before">
         <observer name="etechflow_blog_add_to_top_menu" instance="Etechflow\Blog\Observer\AddBlogToTopMenu"/>
     </event>
+    <!-- License gate for the whole blog storefront route (home + every controller). -->
+    <event name="controller_action_predispatch_blog">
+        <observer name="etechflow_blog_frontend_gate" instance="Etechflow\Blog\Observer\FrontendGate"/>
+    </event>
 </config>
