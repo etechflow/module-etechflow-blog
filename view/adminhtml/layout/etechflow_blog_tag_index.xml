@@ -4,6 +4,11 @@
     <update handle="styles"/>
     <body>
         <referenceContainer name="content">
+            <block class="Magento\Backend\Block\Template"
+                   name="etechflow.blog.update.notice.tag"
+                   template="Etechflow_Blog::update-notice.phtml"
+                   cacheable="false"
+                   before="-"/>
             <uiComponent name="etechflow_blog_tag_listing"/>
         </referenceContainer>
     </body>
